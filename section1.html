@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Section 1 – How the Web Works | Web Security</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --accent: #f59e0b;
+      --dark: #1e293b;
+      --text: #334155;
+      --muted: #64748b;
+      --bg: #f8fafc;
+      --white: #ffffff;
+      --radius: 12px;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+    }
+
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .logo-area { display: flex; align-items: center; gap: 0.75rem; }
+    .logo-placeholder {
+      width: 44px; height: 44px;
+      background: var(--primary-light);
+      border: 2px dashed var(--primary);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; color: var(--primary); font-weight: 600; text-align: center;
+    }
+    .site-title { font-size: 1rem; font-weight: 700; color: var(--dark); }
+    .site-subtitle { font-size: 0.75rem; color: var(--muted); }
+    nav a {
+      text-decoration: none; color: var(--muted); font-size: 0.875rem;
+      font-weight: 600; margin-left: 1.5rem; transition: color 0.2s;
+    }
+    nav a:hover { color: var(--primary); }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar-wrap {
+      background: #e2e8f0; height: 4px; width: 100%;
+    }
+    .progress-bar-fill {
+      background: var(--primary); height: 4px; width: 20%;
+      transition: width 0.3s;
+    }
+
+    /* ── SECTION HERO ── */
+    .section-hero {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      color: white; padding: 3rem 2rem 2.5rem;
+    }
+    .section-hero-inner { max-width: 800px; margin: 0 auto; }
+    .breadcrumb {
+      font-size: 0.8rem; opacity: 0.75; margin-bottom: 0.75rem;
+    }
+    .breadcrumb a { color: white; text-decoration: none; opacity: 0.8; }
+    .breadcrumb a:hover { opacity: 1; }
+    .section-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white; font-size: 0.75rem; font-weight: 700;
+      padding: 0.25rem 0.8rem; border-radius: 999px;
+      margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .section-hero h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 800; line-height: 1.25; margin-bottom: 0.6rem; }
+    .section-hero p { font-size: 0.95rem; opacity: 0.88; max-width: 600px; }
+    .section-meta { display: flex; gap: 1.5rem; margin-top: 1.25rem; flex-wrap: wrap; }
+    .meta-item { font-size: 0.8rem; opacity: 0.8; display: flex; align-items: center; gap: 0.3rem; }
+
+    /* ── MAIN CONTENT ── */
+    .content-wrap { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
+
+    /* ── CONCEPT BLOCK ── */
+    .concept-block { margin-bottom: 2.5rem; }
+    .concept-block h2 {
+      font-size: 1.25rem; font-weight: 800; color: var(--dark);
+      margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .concept-block p { color: var(--text); font-size: 0.925rem; margin-bottom: 1rem; }
+
+    /* ── CODE BOX ── */
+    .code-box {
+      background: #0f172a; border-radius: var(--radius);
+      padding: 1.25rem 1.5rem; overflow-x: auto;
+      font-family: 'Courier New', monospace; font-size: 0.85rem;
+      line-height: 1.65; color: #e2e8f0;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+    .code-label {
+      position: absolute; top: 0.6rem; right: 0.75rem;
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #475569;
+    }
+    .c-tag { color: #7dd3fc; }
+    .c-attr { color: #86efac; }
+    .c-val { color: #fde68a; }
+    .c-text { color: #e2e8f0; }
+    .c-comment { color: #475569; font-style: italic; }
+    .c-keyword { color: #f9a8d4; }
+    .c-string { color: #fde68a; }
+    .c-func { color: #93c5fd; }
+    .c-danger { color: #fca5a5; }
+
+    /* ── INFO BOX ── */
+    .info-box {
+      border-radius: var(--radius); padding: 1rem 1.25rem;
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      margin-bottom: 1rem; font-size: 0.875rem;
+    }
+    .info-box.blue { background: var(--primary-light); border-left: 4px solid var(--primary); }
+    .info-box.green { background: var(--green-light); border-left: 4px solid var(--green); }
+    .info-box.red { background: var(--red-light); border-left: 4px solid var(--red); }
+    .info-box.yellow { background: #fffbeb; border-left: 4px solid var(--accent); }
+    .info-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+    .info-box p { margin: 0; color: var(--dark); }
+    .info-box strong { display: block; margin-bottom: 0.25rem; }
+
+    /* ── THREE PILLARS ── */
+    .pillars {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .pillar {
+      background: var(--white); border: 1px solid #e2e8f0;
+      border-radius: var(--radius); padding: 1.25rem; text-align: center;
+    }
+    .pillar-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .pillar h3 { font-size: 0.95rem; font-weight: 700; color: var(--dark); margin-bottom: 0.25rem; }
+    .pillar p { font-size: 0.8rem; color: var(--muted); }
+    .pillar.html { border-top: 3px solid #f97316; }
+    .pillar.css  { border-top: 3px solid #2563eb; }
+    .pillar.js   { border-top: 3px solid #eab308; }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: #e2e8f0; margin: 2rem 0; }
+
+    /* ── INTERACTIVE DEMO ── */
+    .demo-box {
+      background: var(--white); border: 2px solid #e2e8f0;
+      border-radius: var(--radius); overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .demo-header {
+      background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+      padding: 0.75rem 1.25rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .demo-dot.red { background: #ef4444; }
+    .demo-dot.yellow { background: #eab308; }
+    .demo-dot.green { background: #22c55e; }
+    .demo-title { font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-left: 0.25rem; }
+    .demo-body { padding: 1.5rem; }
+    .demo-body label {
+      display: block; font-size: 0.8rem; font-weight: 700;
+      color: var(--dark); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .demo-body input {
+      width: 100%; padding: 0.65rem 1rem;
+      border: 2px solid #e2e8f0; border-radius: 8px;
+      font-size: 0.9rem; font-family: 'Inter', sans-serif;
+      margin-bottom: 0.75rem; color: var(--dark);
+      transition: border-color 0.2s;
+    }
+    .demo-body input:focus { outline: none; border-color: var(--primary); }
+    .demo-actions { display: flex; gap: 0.6rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .demo-btn {
+      padding: 0.55rem 1.1rem; border-radius: 8px; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-safe {
+      background: var(--green-light); color: var(--green); border: 1px solid #bbf7d0;
+    }
+    .btn-safe:hover { background: #dcfce7; }
+    .btn-unsafe {
+      background: var(--red-light); color: var(--red); border: 1px solid #fecaca;
+    }
+    .btn-unsafe:hover { background: #fee2e2; }
+    .btn-reset {
+      background: #f1f5f9; color: var(--muted); border: 1px solid #e2e8f0;
+    }
+    .btn-reset:hover { background: #e2e8f0; }
+
+    .output-area {
+      border: 1px solid #e2e8f0; border-radius: 8px;
+      padding: 1rem 1.25rem; min-height: 60px;
+      background: #f8fafc;
+    }
+    .output-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.4rem;
+    }
+    .output-content { font-size: 0.9rem; color: var(--dark); }
+    .output-method {
+      margin-top: 0.75rem; font-size: 0.75rem; padding: 0.4rem 0.75rem;
+      border-radius: 6px; display: inline-block; font-weight: 600;
+    }
+    .method-safe { background: var(--green-light); color: var(--green); }
+    .method-unsafe { background: var(--red-light); color: var(--red); }
+
+    /* ── COMPARISON TABLE ── */
+    .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.875rem; }
+    .compare-table th {
+      background: var(--dark); color: white;
+      padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem;
+    }
+    .compare-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:nth-child(even) td { background: #f8fafc; }
+    .badge-safe { background: var(--green-light); color: var(--green); padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem; }
+    .badge-danger { background: var(--red-light); color: var(--red); padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem; }
+
+    /* ── KNOWLEDGE CHECK ── */
+    .quiz-box {
+      background: var(--white); border: 2px solid var(--primary);
+      border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem;
+    }
+    .quiz-box h3 { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .quiz-question { font-size: 0.9rem; color: var(--dark); margin-bottom: 0.75rem; font-weight: 600; }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .quiz-option {
+      display: flex; align-items: center; gap: 0.75rem;
+      background: var(--bg); border: 1px solid #e2e8f0;
+      border-radius: 8px; padding: 0.65rem 1rem;
+      cursor: pointer; font-size: 0.875rem; color: var(--dark);
+      transition: all 0.15s;
+    }
+    .quiz-option:hover { border-color: var(--primary); background: var(--primary-light); }
+    .quiz-option.correct { border-color: var(--green); background: var(--green-light); color: var(--green); }
+    .quiz-option.wrong { border-color: var(--red); background: var(--red-light); color: var(--red); }
+    .quiz-feedback {
+      margin-top: 0.75rem; font-size: 0.875rem; font-weight: 600;
+      display: none; padding: 0.6rem 1rem; border-radius: 8px;
+    }
+    .quiz-feedback.correct { background: var(--green-light); color: var(--green); display: block; }
+    .quiz-feedback.wrong { background: var(--red-light); color: var(--red); display: block; }
+    .quiz-reset-btn {
+      margin-top: 0.75rem; padding: 0.45rem 1rem;
+      background: #f1f5f9; border: 1px solid #e2e8f0;
+      border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      color: var(--muted); display: none;
+    }
+    .quiz-reset-btn:hover { background: #e2e8f0; }
+
+    /* ── NAVIGATION ── */
+    .nav-buttons {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 2rem; background: var(--white); border-top: 1px solid #e2e8f0;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .nav-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.5rem; border-radius: 8px;
+      font-weight: 700; font-size: 0.9rem; text-decoration: none;
+      transition: all 0.15s;
+    }
+    .nav-btn-prev { background: #f1f5f9; color: var(--muted); border: 1px solid #e2e8f0; }
+    .nav-btn-prev:hover { background: #e2e8f0; }
+    .nav-btn-next { background: var(--primary); color: white; box-shadow: 0 3px 10px rgba(37,99,235,0.25); }
+    .nav-btn-next:hover { background: #1d4ed8; transform: translateX(2px); }
+    .nav-section-label { font-size: 0.7rem; font-weight: 400; opacity: 0.7; display: block; }
+
+    footer {
+      background: var(--dark); color: #94a3b8;
+      text-align: center; padding: 1.5rem; font-size: 0.8rem;
+    }
+    footer span { color: var(--accent); font-weight: 600; }
+
+    @media (max-width: 600px) { nav { display: none; } .pillars { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo-area">
+    <div class="logo-placeholder">YOUR<br>LOGO</div>
+    <div>
+      <div class="site-title">Web Security</div>
+      <div class="site-subtitle">Sikkerhet i webutvikling</div>
+    </div>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="#demo">Demo</a>
+    <a href="#quiz">Quiz</a>
+    <a href="section2.html">Next →</a>
+  </nav>
+</header>
+
+<!-- ── PROGRESS ── -->
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" style="width: 20%;"></div>
+</div>
+
+<!-- ── SECTION HERO ── -->
+<section class="section-hero">
+  <div class="section-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> › Section 1
+    </div>
+    <div class="section-badge">🌐 Section 1 of 5</div>
+    <h1>How the Web Works</h1>
+    <p>Before we can understand how things break, we need to understand how they work. This section covers just enough HTML, CSS, and JavaScript to see where security problems come from.</p>
+    <div class="section-meta">
+      <div class="meta-item">⏱️ ~20 minutes</div>
+      <div class="meta-item">🎯 Beginner</div>
+      <div class="meta-item">🛠️ 1 Interactive Demo</div>
+      <div class="meta-item">✅ 1 Knowledge Check</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTENT ── -->
+<div class="content-wrap">
+
+  <!-- Three Pillars -->
+  <div class="concept-block">
+    <h2>🏗️ The Three Pillars of a Web Page</h2>
+    <p>Every website you visit is built from three languages working together. As a security professional, you need to understand each one — not to build websites, but to understand <strong>how browsers process and execute code</strong>.</p>
+    <div class="pillars">
+      <div class="pillar html">
+        <div class="pillar-icon">📄</div>
+        <h3>HTML</h3>
+        <p>Structure and content — headings, paragraphs, forms, links, and input fields.</p>
+      </div>
+      <div class="pillar css">
+        <div class="pillar-icon">🎨</div>
+        <h3>CSS</h3>
+        <p>Visual styling — colors, fonts, layout, and how things look on screen.</p>
+      </div>
+      <div class="pillar js">
+        <div class="pillar-icon">⚡</div>
+        <h3>JavaScript</h3>
+        <p>Behavior and logic — what happens when you click a button or type into a form.</p>
+      </div>
+    </div>
+    <div class="info-box blue">
+      <div class="info-icon">💡</div>
+      <p><strong>Security perspective:</strong> HTML and CSS are mostly static. JavaScript is where things get dangerous — because the browser <em>executes</em> it as code, not just text.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- HTML -->
+  <div class="concept-block">
+    <h2>📄 HTML — Structure</h2>
+    <p>HTML uses <strong>tags</strong> to mark up content. Tags open and close like this: <code style="background:#f1f5f9;padding:0.1rem 0.4rem;border-radius:4px;font-size:0.85rem;">&lt;tag&gt;content&lt;/tag&gt;</code>. A browser reads these tags and decides how to display the page.</p>
+
+    <div class="code-box">
+      <span class="code-label">HTML</span>
+<span class="c-comment">&lt;!-- A basic HTML page structure --&gt;</span>
+<span class="c-tag">&lt;html&gt;</span>
+  <span class="c-tag">&lt;head&gt;</span>
+    <span class="c-tag">&lt;title&gt;</span><span class="c-text">My Page</span><span class="c-tag">&lt;/title&gt;</span>
+  <span class="c-tag">&lt;/head&gt;</span>
+  <span class="c-tag">&lt;body&gt;</span>
+    <span class="c-tag">&lt;h1&gt;</span><span class="c-text">Welcome</span><span class="c-tag">&lt;/h1&gt;</span>
+    <span class="c-tag">&lt;p&gt;</span><span class="c-text">Enter your name:</span><span class="c-tag">&lt;/p&gt;</span>
+    <span class="c-tag">&lt;input</span> <span class="c-attr">type=</span><span class="c-val">"text"</span> <span class="c-attr">id=</span><span class="c-val">"nameInput"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;button&gt;</span><span class="c-text">Submit</span><span class="c-tag">&lt;/button&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">id=</span><span class="c-val">"output"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/body&gt;</span>
+<span class="c-tag">&lt;/html&gt;</span>
+    </div>
+
+    <div class="info-box yellow">
+      <div class="info-icon">🔍</div>
+      <p><strong>Notice the <code>id</code> attributes.</strong> These let JavaScript find and interact with specific elements on the page. The <code>&lt;input&gt;</code> field and the <code>&lt;div id="output"&gt;</code> are where user data enters and gets displayed — this is exactly where XSS attacks happen.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- JavaScript -->
+  <div class="concept-block">
+    <h2>⚡ JavaScript — The Critical Part</h2>
+    <p>JavaScript runs inside the browser and can <strong>read user input</strong> and <strong>write content back to the page</strong>. There are two key methods for writing to the page — and choosing the wrong one creates a security vulnerability.</p>
+
+    <div class="code-box">
+      <span class="code-label">JavaScript</span>
+<span class="c-comment">// Get the value from the input field</span>
+<span class="c-keyword">const</span> userInput = document.<span class="c-func">getElementById</span>(<span class="c-string">'nameInput'</span>).value;
+
+<span class="c-comment">// Method 1 — textContent (SAFE ✅)</span>
+<span class="c-comment">// Treats input as plain text. HTML tags are NOT executed.</span>
+document.<span class="c-func">getElementById</span>(<span class="c-string">'output'</span>).textContent = userInput;
+
+<span class="c-comment">// Method 2 — innerHTML (DANGEROUS ⚠️)</span>
+<span class="c-comment">// Treats input as HTML. Tags ARE parsed and scripts CAN run.</span>
+document.<span class="c-func">getElementById</span>(<span class="c-string">'output'</span>).<span class="c-danger">innerHTML</span> = userInput;
+    </div>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>What it does</th>
+          <th>Parses HTML?</th>
+          <th>Safe for user input?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>textContent</code></td>
+          <td>Displays input as plain text</td>
+          <td>❌ No</td>
+          <td><span class="badge-safe">✓ SAFE</span></td>
+        </tr>
+        <tr>
+          <td><code>innerHTML</code></td>
+          <td>Renders input as live HTML</td>
+          <td>✅ Yes</td>
+          <td><span class="badge-danger">⚠ DANGEROUS</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box red">
+      <div class="info-icon">⚠️</div>
+      <p><strong>This is the root of XSS.</strong> When a developer uses <code>innerHTML</code> with user-supplied data, the browser doesn't know the difference between the developer's HTML and the attacker's HTML. It executes both.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── INTERACTIVE DEMO ── -->
+  <div class="concept-block" id="demo">
+    <h2>🧪 Try It Yourself</h2>
+    <p>Type something in the field below and observe what happens with each method. Try typing a normal name first — then try something like <code style="background:#f1f5f9;padding:0.1rem 0.4rem;border-radius:4px;font-size:0.85rem;">&lt;b&gt;bold text&lt;/b&gt;</code> to see the difference.</p>
+
+    <div class="demo-box">
+      <div class="demo-header">
+        <div class="demo-dot red"></div>
+        <div class="demo-dot yellow"></div>
+        <div class="demo-dot green"></div>
+        <span class="demo-title">Interactive Demo — Safe vs. Unsafe Output</span>
+      </div>
+      <div class="demo-body">
+        <label for="demoInput">Your Input</label>
+        <input type="text" id="demoInput" placeholder='Try typing: <b>hello</b> or <i>world</i>' maxlength="200"/>
+        <div class="demo-actions">
+          <button class="demo-btn btn-safe" onclick="renderSafe()">✅ Render with textContent (Safe)</button>
+          <button class="demo-btn btn-unsafe" onclick="renderUnsafe()">⚠️ Render with innerHTML (Unsafe)</button>
+          <button class="demo-btn btn-reset" onclick="resetDemo()">↺ Reset</button>
+        </div>
+        <div class="output-label">OUTPUT</div>
+        <div class="output-area">
+          <div class="output-content" id="demoOutput">Your result will appear here...</div>
+          <span class="output-method" id="methodLabel" style="display:none;"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box green">
+      <div class="info-icon">🎯</div>
+      <p><strong>What to notice:</strong> With <code>textContent</code>, HTML tags appear as literal text — they are not rendered. With <code>innerHTML</code>, the browser renders and executes the HTML. In Section 2, you will see what happens when that HTML contains a <code>&lt;script&gt;</code> tag.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── KNOWLEDGE CHECK ── -->
+  <div class="quiz-box" id="quiz">
+    <h3>✅ Knowledge Check</h3>
+
+    <p class="quiz-question">Q1 — A web developer uses <code>innerHTML</code> to display a user's comment on a blog page. Why is this a security risk?</p>
+    <div class="quiz-options" id="q1-options">
+      <div class="quiz-option" onclick="checkAnswer(this, false, 'q1')">
+        A &nbsp; Because <code>innerHTML</code> is slower than <code>textContent</code>
+      </div>
+      <div class="quiz-option" onclick="checkAnswer(this, true, 'q1')">
+        B &nbsp; Because the browser will parse and execute any HTML or scripts inside the comment
+      </div>
+      <div class="quiz-option" onclick="checkAnswer(this, false, 'q1')">
+        C &nbsp; Because comments are stored in the database unencrypted
+      </div>
+      <div class="quiz-option" onclick="checkAnswer(this, false, 'q1')">
+        D &nbsp; Because <code>innerHTML</code> only works with trusted sources
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q1-feedback"></div>
+    <button class="quiz-reset-btn" id="q1-reset" onclick="resetQuiz('q1')">Try again</button>
+
+    <div class="divider" style="margin: 1.25rem 0;"></div>
+
+    <p class="quiz-question">Q2 — Which method should a developer use to safely display user-supplied text on a page?</p>
+    <div class="quiz-options" id="q2-options">
+      <div class="quiz-option" onclick="checkAnswer(this, false, 'q2')">
+        A &nbsp; <code>innerHTML</code>
+      </div>
+      <div class="quiz-option" onclick="checkAnswer(this, false, 'q2')">
+        B &nbsp; <code>document.write()</code>
+      </div>
+      <div class="quiz-option" onclick="checkAnswer(this, true, 'q2')">
+        C &nbsp; <code>textContent</code>
+      </div>
+      <div class="quiz-option" onclick="checkAnswer(this, false, 'q2')">
+        D &nbsp; <code>outerHTML</code>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q2-feedback"></div>
+    <button class="quiz-reset-btn" id="q2-reset" onclick="resetQuiz('q2')">Try again</button>
+  </div>
+
+  <!-- ── NEXT SECTION TEASER ── -->
+  <div class="info-box blue">
+    <div class="info-icon">🚀</div>
+    <p><strong>Coming up in Section 2:</strong> Now that you know the difference between <code>innerHTML</code> and <code>textContent</code>, you will see what happens when an attacker puts a <code>&lt;script&gt;</code> tag inside that input field — and why the browser runs it without question.</p>
+  </div>
+
+</div><!-- /content-wrap -->
+
+<!-- ── NAVIGATION ── -->
+<div class="nav-buttons">
+  <a href="index.html" class="nav-btn nav-btn-prev">
+    ← <span><span class="nav-section-label">Back to</span>Home</span>
+  </a>
+  <a href="section2.html" class="nav-btn nav-btn-next">
+    <span><span class="nav-section-label">Up next</span>How XSS Happens</span> →
+  </a>
+</div>
+
+<footer>
+  <p>Web Security Module &nbsp;·&nbsp; Section 1 of 5 &nbsp;·&nbsp; <span>Mazaher Kianpour</span> &nbsp;·&nbsp; Gokstad Akademiet</p>
+</footer>
+
+<!-- ── JAVASCRIPT ── -->
+<script>
+  function renderSafe() {
+    const input = document.getElementById('demoInput').value.trim();
+    if (!input) return;
+    document.getElementById('demoOutput').textContent = input;
+    const lbl = document.getElementById('methodLabel');
+    lbl.textContent = 'Rendered with textContent — tags treated as plain text';
+    lbl.className = 'output-method method-safe';
+    lbl.style.display = 'inline-block';
+  }
+
+  function renderUnsafe() {
+    const input = document.getElementById('demoInput').value.trim();
+    if (!input) return;
+    const out = document.getElementById('demoOutput');
+    // Neutralise <script> for safety in this demo, but render other HTML
+    const safe = input.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '[script blocked in demo]');
+    out.innerHTML = safe;
+    const lbl = document.getElementById('methodLabel');
+    lbl.textContent = 'Rendered with innerHTML — HTML tags were executed by the browser';
+    lbl.className = 'output-method method-unsafe';
+    lbl.style.display = 'inline-block';
+  }
+
+  function resetDemo() {
+    document.getElementById('demoInput').value = '';
+    document.getElementById('demoOutput').textContent = 'Your result will appear here...';
+    const lbl = document.getElementById('methodLabel');
+    lbl.style.display = 'none';
+  }
+
+  function checkAnswer(el, correct, qid) {
+    const opts = document.querySelectorAll('#' + qid + '-options .quiz-option');
+    opts.forEach(o => { o.style.pointerEvents = 'none'; });
+    const fb = document.getElementById(qid + '-feedback');
+    const resetBtn = document.getElementById(qid + '-reset');
+    if (correct) {
+      el.classList.add('correct');
+      fb.textContent = '✅ Correct! Well done.';
+      fb.className = 'quiz-feedback correct';
+    } else {
+      el.classList.add('wrong');
+      fb.textContent = '❌ Not quite. Think about what innerHTML actually does to the browser.';
+      fb.className = 'quiz-feedback wrong';
+      resetBtn.style.display = 'inline-block';
+    }
+  }
+
+  function resetQuiz(qid) {
+    const opts = document.querySelectorAll('#' + qid + '-options .quiz-option');
+    opts.forEach(o => {
+      o.classList.remove('correct', 'wrong');
+      o.style.pointerEvents = 'auto';
+    });
+    document.getElementById(qid + '-feedback').className = 'quiz-feedback';
+    document.getElementById(qid + '-reset').style.display = 'none';
+  }
+</script>
+</body>
+</html>
