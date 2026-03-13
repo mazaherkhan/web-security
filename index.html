@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web Security – XSS | Mazaher Kianpour</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --accent: #f59e0b;
+      --dark: #1e293b;
+      --text: #334155;
+      --muted: #64748b;
+      --bg: #f8fafc;
+      --white: #ffffff;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-placeholder {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-light);
+      border: 2px dashed var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: var(--primary);
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .logo-placeholder:hover { background: #dbeafe; }
+
+    .site-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .site-subtitle {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-left: 1.5rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--primary); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 60%, #1e40af 100%);
+      color: white;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -40px;
+      width: 250px; height: 250px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 span {
+      color: #fde68a;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      opacity: 0.88;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: white;
+      color: var(--primary);
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: 2px solid rgba(255,255,255,0.5);
+      transition: background 0.15s;
+    }
+
+    .btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+    /* ── ABOUT INSTRUCTOR ── */
+    .section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 2rem;
+    }
+
+    .instructor-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      border: 1px solid #e2e8f0;
+    }
+
+    .instructor-avatar {
+      width: 90px;
+      height: 90px;
+      min-width: 90px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      border: 3px dashed var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .instructor-info h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.2rem;
+    }
+
+    .instructor-role {
+      color: var(--primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .instructor-info p {
+      color: var(--text);
+      font-size: 0.925rem;
+      line-height: 1.7;
+    }
+
+    .instructor-tags {
+      margin-top: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+    }
+
+    /* ── MODULE OVERVIEW ── */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .module-card {
+      background: var(--white);
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(37,99,235,0.12);
+      border-color: var(--primary);
+    }
+
+    .module-number {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.5rem;
+    }
+
+    .module-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .module-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .module-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .module-card.highlight {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .module-card.highlight .module-number,
+    .module-card.highlight h4,
+    .module-card.highlight p { color: rgba(255,255,255,0.9); }
+
+    /* ── LEARNING OBJECTIVES ── */
+    .objectives-box {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 1.75rem 2rem;
+    }
+
+    .objectives-box h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .objectives-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .objectives-box li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      color: var(--dark);
+    }
+
+    .objectives-box li::before {
+      content: '✓';
+      color: var(--primary);
+      font-weight: 700;
+      margin-top: 0.05rem;
+      flex-shrink: 0;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      color: #94a3b8;
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+    }
+
+    footer span { color: var(--accent); font-weight: 600; }
+
+    /* ── DIVIDER ── */
+    .divider { background: #f1f5f9; height: 1px; width: 100%; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .instructor-card { flex-direction: column; align-items: center; text-align: center; }
+      .instructor-tags { justify-content: center; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="logo-area">
+    <div class="logo-placeholder">YOUR<br>LOGO</div>
+    <div>
+      <div class="site-title">Web Security</div>
+      <div class="site-subtitle">Sikkerhet i webutvikling</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#modules">Modules</a>
+    <a href="#objectives">Objectives</a>
+    <a href="#instructor">Instructor</a>
+  </nav>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-badge">🎓 Fagskole · Cybersecurity Program</div>
+  <h1>Understanding <span>XSS Vulnerabilities</span><br>in Web Applications</h1>
+  <p>A practical, beginner-friendly module on web security — from how HTML, CSS, and JavaScript work to how attackers exploit them, and how you stop them.</p>
+  <div class="hero-buttons">
+    <a href="section1.html" class="btn-primary">▶ Start Module</a>
+    <a href="#modules" class="btn-outline">View All Sections</a>
+  </div>
+</section>
+
+<!-- ══ LEARNING OBJECTIVES ══ -->
+<div class="section" id="objectives">
+  <div class="section-label">What You Will Learn</div>
+  <div class="section-title">Learning Objectives</div>
+  <div class="objectives-box">
+    <h3>📌 By the end of this module, you will be able to:</h3>
+    <ul>
+      <li>Explain the basics of HTML, CSS, and JavaScript and understand how browsers execute code</li>
+      <li>Describe how Cross-Site Scripting (XSS) vulnerabilities arise from unsanitized user input</li>
+      <li>Identify the three types of XSS — Reflected, Stored, and DOM-based</li>
+      <li>Manually test a web application for XSS vulnerabilities using common payloads</li>
+      <li>Apply basic input sanitization and output encoding to fix vulnerabilities</li>
+    </ul>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ MODULE OVERVIEW ══ -->
+<div class="section" id="modules">
+  <div class="section-label">Course Content</div>
+  <div class="section-title">Module Sections</div>
+  <div class="modules-grid">
+
+    <a href="section1.html" class="module-card">
+      <div class="module-icon">🌐</div>
+      <div class="module-number">Section 1</div>
+      <h4>How the Web Works</h4>
+      <p>HTML, CSS, and JavaScript basics — only what you need to understand security.</p>
+    </a>
+
+    <a href="section2.html" class="module-card">
+      <div class="module-icon">💥</div>
+      <div class="module-number">Section 2</div>
+      <h4>How XSS Happens</h4>
+      <p>See exactly where the vulnerability is born — in the code. Live demo included.</p>
+    </a>
+
+    <a href="section3.html" class="module-card">
+      <div class="module-icon">🗂️</div>
+      <div class="module-number">Section 3</div>
+      <h4>Three Types of XSS</h4>
+      <p>Reflected, Stored, and DOM-based — learn to recognize each type.</p>
+    </a>
+
+    <a href="section4.html" class="module-card">
+      <div class="module-icon">🔍</div>
+      <div class="module-number">Section 4</div>
+      <h4>Testing for XSS</h4>
+      <p>Manual payload testing using a local vulnerable lab — no server needed.</p>
+    </a>
+
+    <a href="section5.html" class="module-card highlight">
+      <div class="module-icon">🛠️</div>
+      <div class="module-number">Section 5 — Mini Project</div>
+      <h4>Fix the Vulnerable App</h4>
+      <p>Find, document, and patch two real XSS flaws. Submit your write-up on GitHub.</p>
+    </a>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ INSTRUCTOR ══ -->
+<div class="section" id="instructor">
+  <div class="section-label">Your Instructor</div>
+  <div class="section-title">About the Course Author</div>
+  <div class="instructor-card">
+    <div class="instructor-avatar">YOUR<br>PHOTO</div>
+    <div class="instructor-info">
+      <h3>Mazaher Kianpour</h3>
+      <div class="instructor-role">Cybersecurity Lecturer & Course Coordinator · Gokstad Akademiet</div>
+      <p>
+        Mazaher Kianpour is a cybersecurity educator and course coordinator at Gokstad Akademiet,
+        where he designs and teaches practical cybersecurity programs for fagskole students.
+        His teaching focuses on making real-world security concepts accessible — combining
+        hands-on labs, risk frameworks, and regulatory knowledge to prepare students for
+        professional cybersecurity roles.
+      </p>
+      <div class="instructor-tags">
+        <span class="tag">Web Security</span>
+        <span class="tag">Risk Assessment</span>
+        <span class="tag">NIST CSF</span>
+        <span class="tag">NIS 2 / GDPR</span>
+        <span class="tag">Ethical Hacking</span>
+        <span class="tag">Incident Response</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <p>Designed for cybersecurity students at fagskole level &nbsp;·&nbsp; <span>Mazaher Kianpour</span> &nbsp;·&nbsp; Gokstad Akademiet</p>
+  <p style="margin-top:0.4rem; font-size:0.78rem; opacity:0.6;">Web Security Module — Sikkerhet i webutvikling</p>
+</footer>
+
+</body>
+</html>
