@@ -8,17 +8,16 @@
   <style>
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     :root {
-      --primary:#2563eb; --pl:#eff6ff; --accent:#f59e0b;
+      --primary:#2563eb; --pl:#eff6ff;
       --dark:#1e293b; --text:#334155; --muted:#64748b;
       --bg:#f8fafc; --white:#fff; --radius:12px;
       --green:#16a34a; --gl:#f0fdf4;
       --red:#dc2626; --rl:#fef2f2;
-      --orange:#ea580c; --ol:#fff7ed;
-      --purple:#7c3aed; --pul:#f5f3ff;
+      --accent:#f59e0b;
     }
     body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
 
-    /* ── HEADER ── */
+    /* HEADER */
     header { background:var(--white); border-bottom:1px solid #e2e8f0; padding:0.85rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:200; box-shadow:0 1px 6px rgba(0,0,0,0.06); }
     .logo-area { display:flex; align-items:center; gap:0.75rem; }
     .logo-area img { width:44px; height:44px; border-radius:10px; object-fit:contain; }
@@ -27,11 +26,11 @@
     nav a { text-decoration:none; color:var(--muted); font-size:0.875rem; font-weight:600; margin-left:1.5rem; transition:color 0.2s; }
     nav a:hover { color:var(--primary); }
 
-    /* ── PROGRESS ── */
+    /* PROGRESS */
     .progress-bar-wrap { background:#e2e8f0; height:4px; }
     .progress-bar-fill { background:var(--primary); height:4px; }
 
-    /* ── HERO ── */
+    /* HERO */
     .section-hero { background:linear-gradient(135deg,#064e3b 0%,#065f46 50%,#047857 100%); color:white; padding:3rem 2rem 2.5rem; }
     .section-hero-inner { max-width:820px; margin:0 auto; }
     .breadcrumb { font-size:0.8rem; opacity:0.75; margin-bottom:0.75rem; }
@@ -42,166 +41,212 @@
     .section-meta { display:flex; gap:1.5rem; margin-top:1.25rem; flex-wrap:wrap; }
     .meta-item { font-size:0.8rem; opacity:0.8; }
 
-    /* ── CONTENT ── */
-    .content-wrap { max-width:820px; margin:0 auto; padding:3rem 2rem; }
-    .concept-block { margin-bottom:2.5rem; }
-    .concept-block h2 { font-size:1.25rem; font-weight:800; color:var(--dark); margin-bottom:0.5rem; }
-    .concept-block > p { color:var(--text); font-size:0.925rem; margin-bottom:1rem; }
-    .divider { height:1px; background:#e2e8f0; margin:2rem 0; }
+    /* CONTENT */
+    .content-wrap { max-width:780px; margin:0 auto; padding:3rem 2rem; }
+    .block { margin-bottom:3rem; }
+    .block-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--primary); margin-bottom:0.3rem; }
+    .block h2 { font-size:1.25rem; font-weight:800; color:var(--dark); margin-bottom:0.6rem; }
+    .block > p { font-size:0.925rem; color:var(--text); margin-bottom:1rem; line-height:1.75; }
+    .divider { height:1px; background:#e2e8f0; margin:2.5rem 0; }
 
-    /* ── INFO BOXES ── */
-    .info-box { border-radius:var(--radius); padding:1rem 1.25rem; display:flex; gap:0.75rem; align-items:flex-start; margin-bottom:1rem; font-size:0.875rem; }
+    /* INFO BOXES */
+    .info-box { border-radius:var(--radius); padding:1rem 1.25rem; display:flex; gap:0.75rem; align-items:flex-start; margin-bottom:1.1rem; font-size:0.875rem; }
     .info-box.blue   { background:var(--pl);  border-left:4px solid var(--primary); }
     .info-box.green  { background:var(--gl);  border-left:4px solid var(--green); }
     .info-box.red    { background:var(--rl);  border-left:4px solid var(--red); }
     .info-box.yellow { background:#fffbeb;    border-left:4px solid var(--accent); }
-    .info-box.orange { background:var(--ol);  border-left:4px solid var(--orange); }
-    .info-icon { font-size:1.1rem; flex-shrink:0; }
-    .info-box p { margin:0; color:var(--dark); }
+    .info-icon { font-size:1.1rem; flex-shrink:0; margin-top:0.05rem; }
+    .info-box p { margin:0; color:var(--dark); line-height:1.65; }
     .info-box strong { display:block; margin-bottom:0.2rem; }
 
-    /* ── CODE BOX ── */
-    .code-box { background:#0f172a; border-radius:var(--radius); padding:1.1rem 1.4rem; overflow-x:auto; font-family:'Courier New',monospace; font-size:0.82rem; line-height:1.7; color:#e2e8f0; margin-bottom:0.75rem; position:relative; }
-    .code-label { position:absolute; top:0.5rem; right:0.75rem; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#475569; }
-    .cg{color:#86efac;} .cr{color:#fca5a5;} .cb{color:#93c5fd;}
-    .cy{color:#fde68a;} .cm{color:#475569;font-style:italic;}
-
-    /* ═══════════════════════════
-       4-STEP METHODOLOGY
-    ═══════════════════════════ */
-    .steps-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1rem; margin-bottom:1.5rem; }
-    .step-card {
+    /* ══════════════════════
+       BLOCK 1 — CONTEXT
+    ══════════════════════ */
+    .context-visual {
       background:var(--white); border:1px solid #e2e8f0; border-radius:var(--radius);
-      padding:1.25rem; position:relative; transition:box-shadow 0.2s;
+      overflow:hidden; margin-bottom:1.25rem;
     }
-    .step-card:hover { box-shadow:0 4px 16px rgba(37,99,235,0.1); }
-    .step-num {
-      width:32px; height:32px; border-radius:50%; display:flex; align-items:center;
-      justify-content:center; font-size:0.85rem; font-weight:800; margin-bottom:0.7rem;
-    }
-    .step-num.s1 { background:var(--pl); color:var(--primary); }
-    .step-num.s2 { background:var(--ol); color:var(--orange); }
-    .step-num.s3 { background:var(--rl); color:var(--red); }
-    .step-num.s4 { background:var(--gl); color:var(--green); }
-    .step-card h4 { font-size:0.875rem; font-weight:700; color:var(--dark); margin-bottom:0.3rem; }
-    .step-card p  { font-size:0.8rem; color:var(--muted); }
-    .step-connector { display:none; }
+    .cv-bar { background:#0f172a; padding:0.65rem 1rem; font-size:0.75rem; font-weight:600; color:#94a3b8; }
+    .cv-body { padding:1.25rem 1.5rem; }
+    .cv-html { font-family:'Courier New',monospace; font-size:0.85rem; line-height:1.9; color:#334155; }
+    .cv-line { display:block; padding:0.1rem 0; }
+    .cv-hl-between { background:#fde68a; border-radius:3px; padding:0 4px; color:#78350f; font-weight:700; }
+    .cv-hl-attr    { background:#bbf7d0; border-radius:3px; padding:0 4px; color:#14532d; font-weight:700; }
+    .cv-hl-script  { background:#fca5a5; border-radius:3px; padding:0 4px; color:#7f1d1d; font-weight:700; }
+    .cv-tag  { color:#7dd3fc; }
+    .cv-attr { color:#86efac; }
+    .cv-val  { color:#fde68a; }
+    .cv-txt  { color:#e2e8f0; }
 
-    /* ═══════════════════════════
-       PAYLOAD LIBRARY
-    ═══════════════════════════ */
-    .payload-library { background:var(--white); border:1px solid #e2e8f0; border-radius:var(--radius); overflow:hidden; margin-bottom:2rem; }
-    .pl-header { background:#0f172a; padding:0.85rem 1.25rem; display:flex; align-items:center; justify-content:space-between; }
-    .pl-header span { color:#94a3b8; font-size:0.8rem; font-weight:600; }
-    .pl-header strong { color:white; font-size:0.9rem; }
-    .pl-tabs { display:flex; border-bottom:1px solid #e2e8f0; background:#f8fafc; overflow-x:auto; }
-    .pl-tab {
-      padding:0.65rem 1rem; font-size:0.8rem; font-weight:700; color:var(--muted);
-      cursor:pointer; border:none; background:transparent; font-family:'Inter',sans-serif;
-      white-space:nowrap; border-bottom:2px solid transparent; transition:all 0.2s;
+    .context-legend { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:1rem; }
+    .legend-item { display:flex; align-items:center; gap:0.4rem; font-size:0.8rem; font-weight:600; }
+    .legend-dot { width:12px; height:12px; border-radius:3px; }
+    .ld-between { background:#fde68a; }
+    .ld-attr    { background:#bbf7d0; }
+    .ld-script  { background:#fca5a5; }
+
+    /* Context cards */
+    .context-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1rem; margin-top:1.25rem; }
+    .ctx-card { background:var(--white); border:2px solid #e2e8f0; border-radius:var(--radius); padding:1.1rem; }
+    .ctx-card.between { border-top:4px solid #f59e0b; }
+    .ctx-card.attr    { border-top:4px solid var(--green); }
+    .ctx-card.script  { border-top:4px solid var(--red); }
+    .ctx-card-icon { font-size:1.5rem; margin-bottom:0.4rem; }
+    .ctx-card h4 { font-size:0.875rem; font-weight:800; color:var(--dark); margin-bottom:0.3rem; }
+    .ctx-card p  { font-size:0.8rem; color:var(--muted); line-height:1.55; margin-bottom:0.6rem; }
+    .ctx-card code { font-family:'Courier New',monospace; font-size:0.78rem; background:#f1f5f9; padding:0.15rem 0.4rem; border-radius:4px; color:var(--dark); display:block; }
+
+    /* ══════════════════════
+       BLOCK 2 — GUIDED WALKTHROUGH
+    ══════════════════════ */
+    .guided-wrap {
+      background:var(--white); border:1px solid #e2e8f0; border-radius:var(--radius);
+      overflow:hidden; margin-bottom:1.25rem;
     }
-    .pl-tab:hover { color:var(--dark); }
-    .pl-tab.active { color:var(--primary); border-bottom-color:var(--primary); background:white; }
-    .pl-body { padding:1.25rem; }
-    .pl-panel { display:none; }
-    .pl-panel.active { display:block; }
-    .pl-desc { font-size:0.85rem; color:var(--muted); margin-bottom:0.85rem; }
-    .payload-row {
-      display:flex; align-items:center; gap:0.75rem;
+    .guided-header {
+      background:#0f172a; padding:1rem 1.5rem;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;
+    }
+    .guided-title { color:white; font-size:0.9rem; font-weight:700; }
+    .guided-step-label { color:#94a3b8; font-size:0.78rem; }
+    .guided-dots { display:flex; gap:0.4rem; padding:1rem 1.5rem 0; }
+    .g-dot {
+      width:26px; height:26px; border-radius:50%; background:#e2e8f0; color:var(--muted);
+      display:flex; align-items:center; justify-content:center; font-size:0.68rem;
+      font-weight:800; cursor:pointer; transition:all 0.2s;
+    }
+    .g-dot.active { background:var(--primary); color:white; }
+    .g-dot.done   { background:var(--green);   color:white; }
+    .guided-body { padding:1.5rem; min-height:260px; }
+    .g-panel { display:none; animation:fadeUp 0.25s ease; }
+    .g-panel.active { display:block; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .g-step-title { font-size:1rem; font-weight:800; color:var(--dark); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem; }
+    .g-step-body  { font-size:0.9rem; color:var(--text); margin-bottom:1rem; line-height:1.7; }
+    .g-visual {
       background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
-      padding:0.6rem 1rem; margin-bottom:0.5rem; cursor:pointer;
-      transition:all 0.15s;
+      padding:0.85rem 1.1rem; font-family:'Courier New',monospace; font-size:0.82rem;
+      line-height:1.7; color:var(--dark); margin-bottom:0.75rem;
     }
-    .payload-row:hover { border-color:var(--primary); background:var(--pl); }
-    .payload-row.copied { border-color:var(--green); background:var(--gl); }
-    .pr-code { font-family:'Courier New',monospace; font-size:0.82rem; color:var(--dark); flex:1; word-break:break-all; }
-    .pr-label { font-size:0.7rem; font-weight:700; color:var(--muted); white-space:nowrap; }
-    .pr-copy { font-size:0.7rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:6px; background:var(--pl); color:var(--primary); white-space:nowrap; }
-    .payload-row.copied .pr-copy { background:var(--gl); color:var(--green); }
-    .pl-note { font-size:0.78rem; color:var(--muted); margin-top:0.75rem; font-style:italic; }
-
-    /* ═══════════════════════════
-       MULTI-CONTEXT LAB
-    ═══════════════════════════ */
-    .lab-wrap { background:var(--white); border:2px solid #e2e8f0; border-radius:var(--radius); overflow:hidden; margin-bottom:2rem; }
-    .lab-top { background:#0f172a; padding:0.7rem 1.1rem; display:flex; align-items:center; gap:0.6rem; }
-    .dot { width:11px; height:11px; border-radius:50%; }
-    .dot.r{background:#ef4444;} .dot.y{background:#eab308;} .dot.g{background:#22c55e;}
-    .lab-top-label { font-size:0.78rem; font-weight:600; color:#94a3b8; margin-left:0.3rem; }
-    .lab-context-tabs { display:flex; border-bottom:2px solid #e2e8f0; overflow-x:auto; }
-    .ctx-tab {
-      padding:0.65rem 1rem; font-size:0.82rem; font-weight:700; color:var(--muted);
-      cursor:pointer; border:none; background:#f8fafc; font-family:'Inter',sans-serif;
-      white-space:nowrap; border-bottom:3px solid transparent; transition:all 0.2s;
+    .g-visual .hl  { background:#fde68a; color:#78350f; padding:0 3px; border-radius:3px; font-weight:700; }
+    .g-visual .bad { background:#fca5a5; color:#7f1d1d; padding:0 3px; border-radius:3px; font-weight:700; }
+    .g-visual .ok  { background:#bbf7d0; color:#14532d; padding:0 3px; border-radius:3px; font-weight:700; }
+    .guided-footer {
+      background:#f8fafc; border-top:1px solid #e2e8f0;
+      padding:0.85rem 1.5rem; display:flex; align-items:center; justify-content:space-between;
     }
-    .ctx-tab:hover { color:var(--dark); background:white; }
-    .ctx-tab.active { color:var(--green); border-bottom-color:var(--green); background:white; }
-    .ctx-panel { display:none; padding:1.5rem; }
-    .ctx-panel.active { display:block; animation:fadeIn 0.25s ease; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    .g-counter { font-size:0.78rem; color:var(--muted); font-weight:600; }
+    .g-btn {
+      padding:0.5rem 1.25rem; border-radius:8px; border:none;
+      background:var(--primary); color:white; font-size:0.85rem; font-weight:700;
+      cursor:pointer; font-family:'Inter',sans-serif; transition:background 0.15s;
+    }
+    .g-btn:hover { background:#1d4ed8; }
+    .g-btn.done  { background:var(--green); }
+    .g-btn.done:hover { background:#15803d; }
 
-    .ctx-split { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
-    .ctx-split-left h4, .ctx-split-right h4 { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.6rem; }
+    /* ══════════════════════
+       BLOCK 3 — TRY IT
+    ══════════════════════ */
+    .try-wrap { background:var(--white); border:2px solid #e2e8f0; border-radius:var(--radius); overflow:hidden; margin-bottom:1.25rem; }
+    .try-header { background:#f8fafc; border-bottom:2px solid #e2e8f0; padding:0.85rem 1.25rem; display:flex; align-items:center; gap:0.75rem; }
+    .try-header h3 { font-size:0.95rem; font-weight:800; color:var(--dark); }
+    .try-steps-row { display:flex; gap:0; border-bottom:1px solid #e2e8f0; }
+    .try-step-btn {
+      flex:1; padding:0.6rem 0.5rem; border:none; background:#f8fafc;
+      font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:700; color:var(--muted);
+      cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; text-align:center;
+    }
+    .try-step-btn:hover { background:white; color:var(--dark); }
+    .try-step-btn.active { background:white; color:var(--primary); border-bottom-color:var(--primary); }
+    .try-step-btn.completed { color:var(--green); border-bottom-color:var(--green); background:var(--gl); }
+    .try-body { padding:1.5rem; }
+    .try-panel { display:none; animation:fadeUp 0.25s ease; }
+    .try-panel.active { display:block; }
+    .try-instruction { background:var(--pl); border-left:4px solid var(--primary); border-radius:8px; padding:0.85rem 1.1rem; font-size:0.875rem; color:var(--dark); margin-bottom:1.1rem; line-height:1.65; }
+    .try-instruction strong { display:block; color:var(--primary); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.25rem; }
 
-    /* Fake browser in lab */
-    .fake-browser { border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; }
-    .fb-bar { background:#f1f5f9; border-bottom:1px solid #e2e8f0; padding:0.5rem 0.85rem; font-size:0.75rem; font-weight:700; color:var(--muted); }
-    .fb-body { padding:1rem 1.1rem; }
-    .fb-body label { display:block; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.4rem; }
-    .fb-input { width:100%; padding:0.55rem 0.85rem; border:2px solid #e2e8f0; border-radius:7px; font-size:0.875rem; font-family:'Inter',sans-serif; color:var(--dark); transition:border-color 0.2s; margin-bottom:0.6rem; }
-    .fb-input:focus { outline:none; border-color:var(--primary); }
-    .fb-btn { padding:0.5rem 1rem; background:var(--green); color:white; border:none; border-radius:7px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; transition:background 0.15s; }
-    .fb-btn:hover { background:#15803d; }
-    .fb-result-lbl { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.3rem; margin-top:0.65rem; }
-    .fb-result { background:#f8fafc; border:1px solid #e2e8f0; border-radius:7px; padding:0.6rem 0.85rem; min-height:40px; font-size:0.875rem; color:var(--dark); }
+    /* Fake app */
+    .fake-app { border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:1rem; }
+    .fa-bar  { background:#f1f5f9; border-bottom:1px solid #e2e8f0; padding:0.5rem 0.9rem; font-size:0.75rem; font-weight:700; color:var(--muted); }
+    .fa-body { padding:1.1rem; }
+    .fa-body label { display:block; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.4rem; }
+    .fa-input { width:100%; padding:0.55rem 0.85rem; border:2px solid #e2e8f0; border-radius:7px; font-size:0.875rem; font-family:'Inter',sans-serif; color:var(--dark); transition:border-color 0.2s; margin-bottom:0.6rem; }
+    .fa-input:focus { outline:none; border-color:var(--primary); }
+    .fa-btn { padding:0.5rem 1.1rem; background:var(--primary); color:white; border:none; border-radius:7px; font-size:0.875rem; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; transition:background 0.15s; }
+    .fa-btn:hover { background:#1d4ed8; }
+    .fa-result-lbl { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-top:0.75rem; margin-bottom:0.3rem; }
+    .fa-result { background:#f8fafc; border:1px solid #e2e8f0; border-radius:7px; padding:0.65rem 0.85rem; min-height:40px; font-size:0.9rem; color:var(--dark); }
 
-    /* Source code pane */
-    .source-pane { font-family:'Courier New',monospace; font-size:0.78rem; line-height:1.65; background:#0f172a; border-radius:8px; padding:0.85rem 1rem; color:#e2e8f0; max-height:180px; overflow-y:auto; }
-    .sp-ok { color:#86efac; } .sp-bad { color:#fca5a5; } .sp-muted { color:#475569; font-style:italic; } .sp-blue { color:#93c5fd; }
+    /* Hint system */
+    .hint-btn { padding:0.4rem 0.9rem; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; color:var(--muted); transition:all 0.15s; }
+    .hint-btn:hover { background:#e2e8f0; }
+    .hint-reveal { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:0.75rem 1rem; font-size:0.875rem; color:#78350f; margin-top:0.75rem; display:none; }
+    .hint-reveal.show { display:block; }
+    .hint-reveal code { background:#fef3c7; padding:0.1rem 0.35rem; border-radius:4px; font-family:'Courier New',monospace; }
 
-    /* Lab log */
-    .lab-log { background:#0f172a; border-radius:8px; padding:0.75rem 1rem; font-family:'Courier New',monospace; font-size:0.76rem; color:#94a3b8; min-height:48px; max-height:110px; overflow-y:auto; margin-top:0.75rem; }
-    .ll-line { padding:0.1rem 0; }
-    .ll-t { color:#475569; } .ll-safe { color:#86efac; } .ll-atk { color:#fca5a5; } .ll-info { color:#93c5fd; }
+    /* Feedback */
+    .try-feedback { margin-top:0.85rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.875rem; font-weight:600; display:none; }
+    .try-feedback.ok  { display:block; background:var(--gl); color:var(--green); }
+    .try-feedback.bad { display:block; background:var(--rl); color:var(--red); }
 
-    /* Observation badge */
-    .obs-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.85rem 1rem; font-size:0.83rem; color:var(--dark); margin-top:0.75rem; }
-    .obs-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.35rem; }
+    .try-next-btn { margin-top:1rem; padding:0.5rem 1.25rem; background:var(--primary); border:none; border-radius:8px; color:white; font-weight:700; font-size:0.875rem; cursor:pointer; font-family:'Inter',sans-serif; transition:background 0.15s; display:none; }
+    .try-next-btn:hover { background:#1d4ed8; }
 
-    /* ═══════════════════════════
-       DEVTOOLS GUIDE
-    ═══════════════════════════ */
-    .devtools-steps { display:flex; flex-direction:column; gap:0.75rem; }
-    .dt-step { display:flex; gap:1rem; align-items:flex-start; background:var(--white); border:1px solid #e2e8f0; border-radius:10px; padding:1rem 1.1rem; }
-    .dt-num { width:30px; height:30px; min-width:30px; border-radius:50%; background:var(--pl); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; }
-    .dt-content h4 { font-size:0.875rem; font-weight:700; color:var(--dark); margin-bottom:0.2rem; }
-    .dt-content p  { font-size:0.83rem; color:var(--muted); }
-    .dt-content code { background:#f1f5f9; padding:0.1rem 0.35rem; border-radius:4px; font-size:0.8rem; color:var(--dark); }
+    /* ══════════════════════
+       BLOCK 4 — 3 PAYLOADS
+    ══════════════════════ */
+    .payload-cards { display:flex; flex-direction:column; gap:1rem; }
+    .payload-card { background:var(--white); border:1px solid #e2e8f0; border-radius:var(--radius); overflow:hidden; }
+    .pc-header { padding:0.85rem 1.25rem; display:flex; align-items:center; justify-content:space-between; cursor:pointer; transition:background 0.15s; }
+    .pc-header:hover { background:#f8fafc; }
+    .pc-left { display:flex; align-items:center; gap:0.75rem; }
+    .pc-num { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; flex-shrink:0; }
+    .pc-num.n1 { background:var(--pl); color:var(--primary); }
+    .pc-num.n2 { background:#fff7ed; color:#ea580c; }
+    .pc-num.n3 { background:#fef9c3; color:#854d0e; }
+    .pc-title { font-size:0.9rem; font-weight:700; color:var(--dark); }
+    .pc-subtitle { font-size:0.78rem; color:var(--muted); }
+    .pc-arrow { font-size:0.9rem; color:var(--muted); transition:transform 0.2s; }
+    .pc-header.open .pc-arrow { transform:rotate(180deg); }
+    .pc-body { padding:0 1.25rem 1.25rem; display:none; animation:fadeUp 0.2s ease; }
+    .pc-body.open { display:block; }
+    .pc-desc { font-size:0.875rem; color:var(--text); margin-bottom:0.85rem; line-height:1.65; }
+    .pc-code { background:#0f172a; border-radius:8px; padding:0.85rem 1.1rem; font-family:'Courier New',monospace; font-size:0.82rem; line-height:1.7; color:#e2e8f0; margin-bottom:0.75rem; }
+    .cc-r{color:#fca5a5;} .cc-g{color:#86efac;} .cc-b{color:#93c5fd;} .cc-y{color:#fde68a;} .cc-m{color:#475569;font-style:italic;}
+    .pc-use { font-size:0.8rem; color:var(--muted); font-style:italic; }
+    .pc-use strong { color:var(--dark); font-style:normal; }
 
-    /* ═══════════════════════════
-       TESTING CHECKLIST
-    ═══════════════════════════ */
-    .checklist-wrap { background:var(--white); border:2px solid var(--primary); border-radius:var(--radius); overflow:hidden; margin-bottom:2rem; }
-    .cl-header { background:var(--pl); border-bottom:1px solid #bfdbfe; padding:0.9rem 1.25rem; display:flex; align-items:center; justify-content:space-between; }
-    .cl-header h3 { font-size:0.95rem; font-weight:800; color:var(--primary); }
-    .cl-progress-text { font-size:0.8rem; font-weight:700; color:var(--primary); }
-    .cl-body { padding:1.25rem; }
-    .cl-body p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
-    .cl-progress-bar { height:6px; background:#e2e8f0; border-radius:3px; margin-bottom:1.25rem; overflow:hidden; }
-    .cl-progress-fill { height:6px; background:var(--primary); border-radius:3px; width:0%; transition:width 0.3s; }
-    .cl-section-title { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin:1rem 0 0.5rem; }
-    .cl-item { display:flex; align-items:flex-start; gap:0.75rem; padding:0.55rem 0; border-bottom:1px solid #f1f5f9; cursor:pointer; }
-    .cl-item:last-child { border-bottom:none; }
-    .cl-checkbox { width:20px; height:20px; min-width:20px; border:2px solid #e2e8f0; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; transition:all 0.2s; margin-top:0.1rem; }
-    .cl-item.checked .cl-checkbox { background:var(--green); border-color:var(--green); color:white; }
-    .cl-item-text { font-size:0.875rem; color:var(--dark); }
-    .cl-item.checked .cl-item-text { color:var(--muted); text-decoration:line-through; }
-    .cl-done-msg { text-align:center; padding:1.25rem 0 0.25rem; font-size:0.9rem; font-weight:700; color:var(--green); display:none; }
-    .cl-done-msg.show { display:block; }
-    .cl-reset-btn { display:block; margin:0.75rem auto 0; padding:0.45rem 1.1rem; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; color:var(--muted); }
-    .cl-reset-btn:hover { background:#e2e8f0; }
+    /* ══════════════════════
+       BLOCK 5 — MINI REPORT
+    ══════════════════════ */
+    .report-form { background:var(--white); border:2px solid var(--primary); border-radius:var(--radius); padding:1.75rem; margin-bottom:1.25rem; }
+    .report-form h3 { font-size:1rem; font-weight:800; color:var(--dark); margin-bottom:0.25rem; }
+    .report-form .rf-sub { font-size:0.85rem; color:var(--muted); margin-bottom:1.5rem; }
+    .rf-field { margin-bottom:1.1rem; }
+    .rf-label { display:block; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--dark); margin-bottom:0.4rem; }
+    .rf-label span { color:var(--red); }
+    .rf-input, .rf-select, .rf-textarea {
+      width:100%; padding:0.6rem 0.9rem; border:2px solid #e2e8f0; border-radius:8px;
+      font-size:0.875rem; font-family:'Inter',sans-serif; color:var(--dark); background:white;
+      transition:border-color 0.2s;
+    }
+    .rf-input:focus, .rf-select:focus, .rf-textarea:focus { outline:none; border-color:var(--primary); }
+    .rf-textarea { resize:vertical; min-height:72px; }
+    .rf-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .rf-submit-btn {
+      width:100%; padding:0.75rem; background:var(--primary); border:none; border-radius:8px;
+      color:white; font-weight:800; font-size:0.95rem; cursor:pointer;
+      font-family:'Inter',sans-serif; transition:background 0.15s; margin-top:0.5rem;
+    }
+    .rf-submit-btn:hover { background:#1d4ed8; }
+    .rf-result { margin-top:1rem; padding:1.1rem 1.25rem; background:var(--gl); border:1px solid #bbf7d0; border-radius:10px; display:none; }
+    .rf-result.show { display:block; }
+    .rf-result h4 { font-size:0.9rem; font-weight:800; color:var(--green); margin-bottom:0.75rem; }
+    .rf-result-row { font-size:0.85rem; color:var(--dark); margin-bottom:0.35rem; }
+    .rf-result-row strong { color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; display:block; }
 
-    /* ── NAV ── */
+    /* NAV */
     .nav-buttons { display:flex; justify-content:space-between; align-items:center; padding:2rem; background:var(--white); border-top:1px solid #e2e8f0; flex-wrap:wrap; gap:1rem; }
     .nav-btn { display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.5rem; border-radius:8px; font-weight:700; font-size:0.9rem; text-decoration:none; transition:all 0.15s; }
     .nav-btn-prev { background:#f1f5f9; color:var(--muted); border:1px solid #e2e8f0; }
@@ -212,7 +257,7 @@
 
     footer { background:var(--dark); color:#94a3b8; text-align:center; padding:1.5rem; font-size:0.8rem; }
     footer span { color:var(--accent); font-weight:600; }
-    @media(max-width:640px) { nav{display:none;} .ctx-split{grid-template-columns:1fr;} .steps-grid{grid-template-columns:1fr 1fr;} }
+    @media(max-width:600px){ nav{display:none;} .rf-row{grid-template-columns:1fr;} .context-cards{grid-template-columns:1fr;} }
   </style>
 </head>
 <body>
@@ -220,7 +265,7 @@
 <!-- HEADER -->
 <header>
   <div class="logo-area">
-    <img src="gokstadakademiet-logo-svart.PNG" alt="Logo"/>
+    <img src="logo.png" alt="Logo"/>
     <div>
       <div class="site-title">Web Security</div>
       <div class="site-subtitle">Sikkerhet i webutvikling</div>
@@ -229,8 +274,6 @@
   <nav>
     <a href="index.html">Home</a>
     <a href="section3.html">← Sec 3</a>
-    <a href="#lab">Lab</a>
-    <a href="#checklist">Checklist</a>
     <a href="section5.html">Sec 5 →</a>
   </nav>
 </header>
@@ -245,379 +288,466 @@
     <div class="breadcrumb"><a href="index.html">Home</a> › Section 4</div>
     <div class="section-badge">🔍 Section 4 of 5</div>
     <h1>Testing for XSS</h1>
-    <p>Theory is only half the job. In this section you follow a real testing methodology, try payloads across four different vulnerable contexts, and build a professional testing habit with a practical checklist.</p>
+    <p>You know what XSS is and how it works. Now you will learn <em>how to find it</em> — step by step, with a real method, three key payloads, and a structured way to document what you discover.</p>
     <div class="section-meta">
-      <div class="meta-item">⏱️ ~30 min</div>
-      <div class="meta-item">📋 4-Step Method</div>
-      <div class="meta-item">🧪 4-Context Lab</div>
-      <div class="meta-item">✅ Testing Checklist</div>
+      <div class="meta-item">⏱️ ~25 min</div>
+      <div class="meta-item">🧠 Concept first</div>
+      <div class="meta-item">👀 Guided demo</div>
+      <div class="meta-item">🧪 Hands-on lab</div>
+      <div class="meta-item">📝 Mini report</div>
     </div>
   </div>
 </section>
 
 <div class="content-wrap">
 
-  <!-- METHODOLOGY -->
-  <div class="concept-block">
-    <h2>📋 The 4-Step Testing Method</h2>
-    <p>Every manual XSS test follows the same structured process. Skip any step and you will miss vulnerabilities.</p>
+  <!-- ══════════════════════════════════════
+       BLOCK 1 — WHAT IS A CONTEXT?
+  ══════════════════════════════════════ -->
+  <div class="block">
+    <div class="block-label">Concept</div>
+    <h2>1 · Where Does Your Input Land?</h2>
+    <p>Before you inject anything, you need to answer one question: <strong>where in the HTML does my input appear?</strong> That location is called the <strong>injection context</strong>. It determines which payload will actually work.</p>
 
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-num s1">1</div>
-        <h4>Map Inputs</h4>
-        <p>Find every place user data enters the app — URL params, form fields, headers, cookies.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num s2">2</div>
-        <h4>Probe &amp; Observe</h4>
-        <p>Send a unique marker like <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;font-size:0.78rem;">xsstest123</code> and check where it appears in the page source or DOM.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num s3">3</div>
-        <h4>Inject Payload</h4>
-        <p>Based on context, inject a matching payload. Observe whether the browser parses and executes it.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num s4">4</div>
-        <h4>Confirm &amp; Document</h4>
-        <p>Confirm execution (e.g. alert fires, DOM changes). Note the type, location, and payload used.</p>
+    <p>Look at the HTML below. A user's input could land in three very different places — each highlighted in a different colour.</p>
+
+    <div class="context-visual">
+      <div class="cv-bar">📄 Example HTML page — three possible injection contexts</div>
+      <div class="cv-body">
+        <div class="cv-html">
+          <span class="cv-line"><span class="cv-tag">&lt;html&gt;</span></span>
+          <span class="cv-line">&nbsp;&nbsp;<span class="cv-tag">&lt;body&gt;</span></span>
+          <span class="cv-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="cv-tag">&lt;p&gt;</span>You searched for: <span class="cv-hl-between">LAPTOP</span><span class="cv-tag">&lt;/p&gt;</span></span>
+          <span class="cv-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="cv-tag">&lt;input</span> <span class="cv-attr">value=</span><span class="cv-val">"<span class="cv-hl-attr">LAPTOP</span>"</span><span class="cv-tag">&gt;</span></span>
+          <span class="cv-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="cv-tag">&lt;script&gt;</span></span>
+          <span class="cv-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var query = "<span class="cv-hl-script">LAPTOP</span>";</span>
+          <span class="cv-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="cv-tag">&lt;/script&gt;</span></span>
+          <span class="cv-line">&nbsp;&nbsp;<span class="cv-tag">&lt;/body&gt;</span></span>
+          <span class="cv-line"><span class="cv-tag">&lt;/html&gt;</span></span>
+        </div>
+        <div class="context-legend">
+          <div class="legend-item"><div class="legend-dot ld-between"></div>Context A — Between HTML tags</div>
+          <div class="legend-item"><div class="legend-dot ld-attr"></div>Context B — Inside an attribute value</div>
+          <div class="legend-item"><div class="legend-dot ld-script"></div>Context C — Inside a JavaScript block</div>
+        </div>
       </div>
     </div>
 
-    <div class="info-box yellow">
+    <div class="context-cards">
+      <div class="ctx-card between">
+        <div class="ctx-card-icon">🟡</div>
+        <h4>A — Between HTML Tags</h4>
+        <p>Your input sits directly between tags like <code>&lt;p&gt;</code> and <code>&lt;/p&gt;</code>. You can inject a new tag here.</p>
+        <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>
+      </div>
+      <div class="ctx-card attr">
+        <div class="ctx-card-icon">🟢</div>
+        <h4>B — Inside an Attribute</h4>
+        <p>Your input is the value of an attribute like <code>value=""</code>. You need to close the quote first.</p>
+        <code>" onmouseover="alert(1)</code>
+      </div>
+      <div class="ctx-card script">
+        <div class="ctx-card-icon">🔴</div>
+        <h4>C — Inside a Script Block</h4>
+        <p>Your input is inside existing JavaScript code. You need to break out of the string.</p>
+        <code">"; alert(1); //</code>
+      </div>
+    </div>
+
+    <div class="info-box yellow" style="margin-top:1.25rem;">
       <div class="info-icon">💡</div>
-      <p><strong>Why "probe first"?</strong> Sending a harmless marker first tells you exactly where your input lands in the HTML — inside a tag, inside an attribute, or inside a script block. That context determines which payload to use.</p>
+      <p><strong>The rule:</strong> First find where your input lands. Then choose a payload that fits that location. Using the wrong payload in the wrong context will always fail — even on a vulnerable application.</p>
     </div>
   </div>
 
   <div class="divider"></div>
 
-  <!-- PAYLOAD LIBRARY -->
-  <div class="concept-block">
-    <h2>📦 Payload Library</h2>
-    <p>Click any payload row to copy it to your clipboard. These are the most useful beginner payloads — grouped by purpose.</p>
+  <!-- ══════════════════════════════════════
+       BLOCK 2 — GUIDED WALKTHROUGH
+  ══════════════════════════════════════ -->
+  <div class="block">
+    <div class="block-label">Guided Demo</div>
+    <h2>2 · Watch a Full Test — Step by Step</h2>
+    <p>Before you test on your own, follow this complete walkthrough of testing a vulnerable search box. Click <strong>Next</strong> to move through each step exactly as a real tester would.</p>
 
-    <div class="payload-library">
-      <div class="pl-header">
-        <strong>XSS Payload Library</strong>
-        <span>Click a row to copy</span>
+    <div class="guided-wrap">
+      <div class="guided-header">
+        <span class="guided-title" id="gTitle">Step 1 / 5 — Find the Input</span>
+        <span class="guided-step-label" id="gStepLabel">Getting started</span>
       </div>
-      <div class="pl-tabs" id="plTabs">
-        <button class="pl-tab active" data-panel="basic">🔍 Detection</button>
-        <button class="pl-tab" data-panel="html">📄 HTML Injection</button>
-        <button class="pl-tab" data-panel="event">⚡ Event Handlers</button>
-        <button class="pl-tab" data-panel="bypass">🔶 Filter Bypass</button>
-      </div>
-      <div class="pl-body">
+      <div class="guided-dots" id="gDots"></div>
+      <div class="guided-body">
 
-        <div class="pl-panel active" id="pl-basic">
-          <p class="pl-desc">Start here. These payloads confirm whether a reflection point exists before attempting execution.</p>
-          <div class="payload-row" data-payload="xsstest123"><span class="pr-label">Probe marker</span><span class="pr-code">xsstest123</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload='&lt;script&gt;alert(1)&lt;/script&gt;'><span class="pr-label">Classic</span><span class="pr-code">&lt;script&gt;alert(1)&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload='&lt;script&gt;alert(document.domain)&lt;/script&gt;'><span class="pr-label">Domain confirm</span><span class="pr-code">&lt;script&gt;alert(document.domain)&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload='&lt;script&gt;console.log("XSS")&lt;/script&gt;'><span class="pr-label">Silent confirm</span><span class="pr-code">&lt;script&gt;console.log("XSS")&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
-          <p class="pl-note">💡 Tip: Always check browser DevTools Console after injecting — execution may be silent.</p>
-        </div>
-
-        <div class="pl-panel" id="pl-html">
-          <p class="pl-desc">These inject HTML without a script tag. Useful when script tags are filtered.</p>
-          <div class="payload-row" data-payload='&lt;b&gt;injected&lt;/b&gt;'><span class="pr-label">HTML tag test</span><span class="pr-code">&lt;b&gt;injected&lt;/b&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload='&lt;h1 style="color:red"&gt;XSS&lt;/h1&gt;'><span class="pr-label">Style inject</span><span class="pr-code">&lt;h1 style="color:red"&gt;XSS&lt;/h1&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload='&lt;img src="x" onerror="alert(1)"&gt;'><span class="pr-label">img onerror</span><span class="pr-code">&lt;img src="x" onerror="alert(1)"&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload='&lt;svg onload="alert(1)"&gt;&lt;/svg&gt;'><span class="pr-label">SVG onload</span><span class="pr-code">&lt;svg onload="alert(1)"&gt;&lt;/svg&gt;</span><span class="pr-copy">Copy</span></div>
-          <p class="pl-note">💡 Event-based payloads like <code>onerror</code> and <code>onload</code> execute JavaScript without any script tag at all.</p>
-        </div>
-
-        <div class="pl-panel" id="pl-event">
-          <p class="pl-desc">These payloads break out of HTML attribute values to inject event handlers — useful when your input lands inside a tag attribute.</p>
-          <div class="payload-row" data-payload='"&gt;&lt;img src=x onerror=alert(1)&gt;'><span class="pr-label">Quote break</span><span class="pr-code">"&gt;&lt;img src=x onerror=alert(1)&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload="'&gt;&lt;script&gt;alert(1)&lt;/script&gt;"><span class="pr-label">Single quote</span><span class="pr-code">'&gt;&lt;script&gt;alert(1)&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload='" autofocus onfocus="alert(1)" x="'><span class="pr-label">Autofocus</span><span class="pr-code">" autofocus onfocus="alert(1)" x="</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload="&lt;input type=text value=&quot;&quot; onfocus=&quot;alert(1)&quot; autofocus&gt;"><span class="pr-label">Input handler</span><span class="pr-code">&lt;input onfocus="alert(1)" autofocus&gt;</span><span class="pr-copy">Copy</span></div>
-          <p class="pl-note">💡 Context matters: if your input lands inside <code>value="..."</code>, you need to close the quote first before injecting.</p>
-        </div>
-
-        <div class="pl-panel" id="pl-bypass">
-          <p class="pl-desc">Some filters only check lowercase. These variations can bypass naive keyword-based filters.</p>
-          <div class="payload-row" data-payload="&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;"><span class="pr-label">Uppercase</span><span class="pr-code">&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload="&lt;ScRiPt&gt;alert(1)&lt;/ScRiPt&gt;"><span class="pr-label">Mixed case</span><span class="pr-code">&lt;ScRiPt&gt;alert(1)&lt;/ScRiPt&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload="&lt;scr&lt;script&gt;ipt&gt;alert(1)&lt;/scr&lt;/script&gt;ipt&gt;"><span class="pr-label">Nested tag</span><span class="pr-code">&lt;scr&lt;script&gt;ipt&gt;alert(1)&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
-          <div class="payload-row" data-payload="javascript:alert(1)"><span class="pr-label">JS protocol</span><span class="pr-code">javascript:alert(1)</span><span class="pr-copy">Copy</span></div>
-          <p class="pl-note">⚠ These show why string-matching filters are not reliable. Proper encoding and a Content Security Policy (CSP) are needed.</p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- MULTI-CONTEXT LAB -->
-  <div class="concept-block" id="lab">
-    <h2>🧪 Multi-Context Lab</h2>
-    <p>The same payload does not work in every context. Test each of the four tabs to see how context changes what succeeds.</p>
-
-    <div class="lab-wrap">
-      <div class="lab-top">
-        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-        <span class="lab-top-label">XSS Testing Lab — Four Vulnerable Contexts</span>
-      </div>
-      <div class="lab-context-tabs" id="ctxTabs">
-        <button class="ctx-tab active" data-ctx="ctx1">1 · URL Param</button>
-        <button class="ctx-tab" data-ctx="ctx2">2 · Comment Box</button>
-        <button class="ctx-tab" data-ctx="ctx3">3 · Attribute</button>
-        <button class="ctx-tab" data-ctx="ctx4">4 · DOM Hash</button>
-      </div>
-
-      <!-- CTX 1: URL Parameter -->
-      <div class="ctx-panel active" id="ctx1">
-        <div class="ctx-split">
-          <div class="ctx-split-left">
-            <h4>🖥️ Vulnerable App</h4>
-            <div class="fake-browser">
-              <div class="fb-bar">🌐 shop.example.com/search</div>
-              <div class="fb-body">
-                <label>Search query</label>
-                <input class="fb-input" id="ctx1-input" type="text" placeholder="Enter search term..." maxlength="200"/>
-                <button class="fb-btn" id="ctx1-btn">Search</button>
-                <div class="fb-result-lbl">Page Output</div>
-                <div class="fb-result" id="ctx1-result">Your results appear here.</div>
-              </div>
-            </div>
+        <div class="g-panel active" id="gp0">
+          <div class="g-step-title">🔍 Step 1 — Find an Input That Reflects</div>
+          <div class="g-step-body">Open the target page and look for any input that appears somewhere on the page after you submit it. A search box that says <em>"You searched for: ..."</em> is a classic example. Type a harmless word to confirm it reflects.</div>
+          <div class="g-visual">
+            <div>You type: <span class="hl">laptop</span></div>
+            <div>Page shows: <span class="hl">You searched for: laptop</span></div>
+            <div style="margin-top:0.5rem;color:#64748b;">✓ Confirmed — input is reflected on the page</div>
           </div>
-          <div class="ctx-split-right">
-            <h4>📄 Vulnerable Source Code</h4>
-            <div class="source-pane">
-              <span class="sp-muted">// Server-side PHP (simplified)</span><br/>
-              <span class="sp-blue">$query</span> = <span class="sp-blue">$_GET</span>[<span class="sp-muted">'q'</span>];<br/>
-              <span class="sp-muted">// No sanitization!</span><br/>
-              echo <span class="sp-muted">"&lt;p&gt;Results for: "</span> . <span class="sp-bad">$query</span> . <span class="sp-muted">"&lt;/p&gt;"</span>;<br/>
-              <br/>
-              <span class="sp-muted">// URL: /search?q=YOUR_INPUT</span><br/>
-              <span class="sp-muted">// Type: Reflected XSS</span>
-            </div>
+          <div class="info-box blue">
+            <div class="info-icon">📌</div>
+            <p>At this stage you are just <em>observing</em>. Do not inject anything yet. Just confirm the reflection exists.</p>
           </div>
         </div>
-        <div class="obs-label">OBSERVATION LOG</div>
-        <div class="lab-log" id="ctx1-log"><div class="ll-line"><span class="ll-info">[ready] Context 1 — URL Parameter. Try the payloads from the library above.</span></div></div>
-        <div class="obs-box" id="ctx1-obs">
-          <div class="obs-label">WHAT TO NOTICE</div>
-          Try a plain word first, then a <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;">&lt;b&gt;</code> tag, then an <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;">&lt;img onerror=...&gt;</code>. Notice how the browser renders each differently depending on the tag.
-        </div>
-      </div>
 
-      <!-- CTX 2: Comment Box -->
-      <div class="ctx-panel" id="ctx2">
-        <div class="ctx-split">
-          <div class="ctx-split-left">
-            <h4>🖥️ Vulnerable App</h4>
-            <div class="fake-browser">
-              <div class="fb-bar">🌐 blog.example.com/post/1</div>
-              <div class="fb-body">
-                <label>Leave a comment</label>
-                <input class="fb-input" id="ctx2-input" type="text" placeholder="Write your comment..." maxlength="200"/>
-                <button class="fb-btn" id="ctx2-submit-btn">Submit</button>
-                <div class="fb-result-lbl">Comments Section</div>
-                <div class="fb-result" id="ctx2-comments" style="min-height:60px;">No comments yet.</div>
-              </div>
-            </div>
-          </div>
-          <div class="ctx-split-right">
-            <h4>📄 Vulnerable Source Code</h4>
-            <div class="source-pane">
-              <span class="sp-muted">// Comment is saved to DB then rendered</span><br/>
-              <span class="sp-muted">// When page loads, JS reads stored comments:</span><br/><br/>
-              <span class="sp-blue">comments</span>.forEach(<span class="sp-blue">c</span> => {<br/>
-              &nbsp;&nbsp;<span class="sp-blue">const</span> div = document.<span class="sp-ok">createElement</span>(<span class="sp-muted">'div'</span>);<br/>
-              &nbsp;&nbsp;div.<span class="sp-bad">innerHTML</span> = c.text;<br/>
-              &nbsp;&nbsp;box.<span class="sp-ok">appendChild</span>(div);<br/>
-              });<br/>
-              <span class="sp-muted">// Type: Stored XSS</span>
-            </div>
+        <div class="g-panel" id="gp1">
+          <div class="g-step-title">🧭 Step 2 — Find Your Context</div>
+          <div class="g-step-body">Right-click on the reflected output and choose <strong>Inspect</strong> (or press F12 and use the Elements tab). Find your input in the HTML source. Ask: is it between tags, inside an attribute, or inside a script block?</div>
+          <div class="g-visual">
+            <div style="color:#64748b;">— Page source (Elements tab) —</div>
+            <div>&lt;p&gt;You searched for: <span class="hl">laptop</span>&lt;/p&gt;</div>
+            <div style="margin-top:0.5rem;color:#64748b;">✓ Context: <strong>between HTML tags</strong> → Context A</div>
+            <div style="margin-top:0.25rem;color:#64748b;">→ Payload to use: a full tag like &lt;script&gt; or &lt;img&gt;</div>
           </div>
         </div>
-        <div class="obs-label">OBSERVATION LOG</div>
-        <div class="lab-log" id="ctx2-log"><div class="ll-line"><span class="ll-info">[ready] Context 2 — Comment Box (Stored). Submit multiple comments — they persist on the page.</span></div></div>
-        <div class="obs-box">
-          <div class="obs-label">WHAT TO NOTICE</div>
-          Unlike Context 1, submitted content <strong>stays on the page</strong> — simulating stored XSS. Submit a normal comment, then submit a malicious one. Every "visitor" who sees this page gets hit.
-        </div>
-      </div>
 
-      <!-- CTX 3: Attribute -->
-      <div class="ctx-panel" id="ctx3">
-        <div class="ctx-split">
-          <div class="ctx-split-left">
-            <h4>🖥️ Vulnerable App</h4>
-            <div class="fake-browser">
-              <div class="fb-bar">🌐 app.example.com/profile</div>
-              <div class="fb-body">
-                <label>Your username (shown as tooltip)</label>
-                <input class="fb-input" id="ctx3-input" type="text" placeholder='Try: " onmouseover="alert(1)' maxlength="200"/>
-                <button class="fb-btn" id="ctx3-btn">Update Profile</button>
-                <div class="fb-result-lbl">Rendered Output (hover the box)</div>
-                <div class="fb-result" id="ctx3-result" style="min-height:40px;"></div>
-              </div>
-            </div>
-          </div>
-          <div class="ctx-split-right">
-            <h4>📄 Vulnerable Source Code</h4>
-            <div class="source-pane">
-              <span class="sp-muted">// Input injected into an attribute value</span><br/><br/>
-              <span class="sp-muted">// Safe input renders as:</span><br/>
-              &lt;div <span class="sp-ok">title=</span><span class="sp-muted">"</span><span class="sp-ok">alice</span><span class="sp-muted">"</span>&gt;Welcome&lt;/div&gt;<br/><br/>
-              <span class="sp-muted">// Attack: close the attribute + inject event</span><br/>
-              <span class="sp-muted">// Input: " onmouseover="alert(1)</span><br/>
-              &lt;div <span class="sp-ok">title=</span><span class="sp-muted">"</span><span class="sp-bad">" onmouseover="alert(1)</span><span class="sp-muted">"</span>&gt;…&lt;/div&gt;<br/>
-              <span class="sp-muted">// Type: Reflected XSS via attribute</span>
-            </div>
+        <div class="g-panel" id="gp2">
+          <div class="g-step-title">⚗️ Step 3 — Inject a Basic Payload</div>
+          <div class="g-step-body">You are in Context A, so a <code>&lt;script&gt;</code> tag should land directly in the HTML. Inject the simplest possible payload. You are not trying to steal anything — just confirm execution.</div>
+          <div class="g-visual">
+            <div>You type: <span class="bad">&lt;script&gt;alert(1)&lt;/script&gt;</span></div>
+            <div style="margin-top:0.5rem;">Page source becomes:</div>
+            <div>&lt;p&gt;You searched for: <span class="bad">&lt;script&gt;alert(1)&lt;/script&gt;</span>&lt;/p&gt;</div>
+            <div style="margin-top:0.5rem;color:#dc2626;">🔥 Browser executes the script — alert box appears</div>
           </div>
         </div>
-        <div class="obs-label">OBSERVATION LOG</div>
-        <div class="lab-log" id="ctx3-log"><div class="ll-line"><span class="ll-info">[ready] Context 3 — Attribute Injection. Your input lands inside a title="" attribute.</span></div></div>
-        <div class="obs-box">
-          <div class="obs-label">WHAT TO NOTICE</div>
-          A plain word becomes a safe tooltip. But injecting <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;">" onmouseover="alert(1)</code> <strong>breaks out</strong> of the attribute and adds a new event handler. Hover the rendered box to trigger it.
-        </div>
-      </div>
 
-      <!-- CTX 4: DOM Hash -->
-      <div class="ctx-panel" id="ctx4">
-        <div class="ctx-split">
-          <div class="ctx-split-left">
-            <h4>🖥️ Vulnerable App</h4>
-            <div class="fake-browser">
-              <div class="fb-bar">🌐 app.example.com/welcome<span id="ctx4-url-suffix" style="color:#fde68a;font-family:monospace;font-size:0.78rem;"></span></div>
-              <div class="fb-body">
-                <label>Simulate URL hash (#) value</label>
-                <input class="fb-input" id="ctx4-input" type="text" placeholder="Type a name or payload..." maxlength="200"/>
-                <button class="fb-btn" id="ctx4-btn">Load Page</button>
-                <div class="fb-result-lbl">Page renders the hash as:</div>
-                <div class="fb-result" id="ctx4-result">The welcome message appears here.</div>
-              </div>
-            </div>
+        <div class="g-panel" id="gp3">
+          <div class="g-step-title">✅ Step 4 — Confirm Execution</div>
+          <div class="g-step-body">An alert box appearing is the classic confirmation. But in real tests, use the DevTools <strong>Console</strong> tab instead — it is less disruptive and shows all JS execution including silent payloads.</div>
+          <div class="g-visual">
+            <div>Better confirmation payload:</div>
+            <div><span class="bad">&lt;script&gt;console.log("XSS confirmed on: " + document.domain)&lt;/script&gt;</span></div>
+            <div style="margin-top:0.5rem;color:#64748b;">→ Open Console tab in DevTools → you see:</div>
+            <div><span class="ok">XSS confirmed on: shop.example.com</span></div>
           </div>
-          <div class="ctx-split-right">
-            <h4>📄 Vulnerable Source Code</h4>
-            <div class="source-pane">
-              <span class="sp-muted">// JavaScript reads the URL hash directly</span><br/>
-              <span class="sp-muted">// and writes it to the page — no server involved</span><br/><br/>
-              <span class="sp-blue">const</span> hash = window.location<span class="sp-bad">.hash</span>.substring(1);<br/>
-              <span class="sp-blue">const</span> name = decodeURIComponent(hash);<br/><br/>
-              document.getElementById(<span class="sp-muted">'msg'</span>).<span class="sp-bad">innerHTML</span><br/>
-              &nbsp;&nbsp;= <span class="sp-muted">"Welcome, "</span> + <span class="sp-bad">name</span>;<br/><br/>
-              <span class="sp-muted">// Payload NEVER reaches the server</span><br/>
-              <span class="sp-muted">// Type: DOM-Based XSS</span>
-            </div>
+          <div class="info-box green">
+            <div class="info-icon">✅</div>
+            <p>Execution is confirmed. The vulnerability is real. Now stop — do not exploit further. Move to documentation.</p>
           </div>
         </div>
-        <div class="obs-label">OBSERVATION LOG</div>
-        <div class="lab-log" id="ctx4-log"><div class="ll-line"><span class="ll-info">[ready] Context 4 — DOM-Based (hash). Input is never sent to the server.</span></div></div>
-        <div class="obs-box">
-          <div class="obs-label">WHAT TO NOTICE</div>
-          Type a normal name first. Then try <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;">&lt;img src=x onerror="this.parentNode.style.background='red'"&gt;</code>. Notice the URL bar updates but no server request is made — this is pure client-side DOM injection.
-        </div>
-      </div>
 
-    </div><!-- /lab-wrap -->
-  </div>
+        <div class="g-panel" id="gp4">
+          <div class="g-step-title">📝 Step 5 — Document the Finding</div>
+          <div class="g-step-body">A finding is only useful if it is documented clearly. Write down exactly: where the vulnerability is, what type it is, what payload triggered it, and what a real attacker could do with it.</div>
+          <div class="g-visual">
+            <div><strong>Location:</strong> <span class="hl">GET /search?q=</span></div>
+            <div><strong>Type:</strong> Reflected XSS</div>
+            <div><strong>Context:</strong> Between HTML tags</div>
+            <div><strong>Payload:</strong> <span class="bad">&lt;script&gt;alert(1)&lt;/script&gt;</span></div>
+            <div><strong>Impact:</strong> Session hijacking via document.cookie</div>
+          </div>
+        </div>
 
-  <div class="divider"></div>
-
-  <!-- DEVTOOLS GUIDE -->
-  <div class="concept-block">
-    <h2>🛠️ Using Browser DevTools</h2>
-    <p>DevTools is your main observation tool during manual XSS testing. These are the exact steps you use on every target.</p>
-    <div class="devtools-steps">
-      <div class="dt-step">
-        <div class="dt-num">1</div>
-        <div class="dt-content">
-          <h4>Open DevTools</h4>
-          <p>Press <code>F12</code> (or <code>Ctrl+Shift+I</code>) in Chrome or Firefox. Keep it open while you test — never close it mid-session.</p>
-        </div>
-      </div>
-      <div class="dt-step">
-        <div class="dt-num">2</div>
-        <div class="dt-content">
-          <h4>Use the Console tab to confirm execution</h4>
-          <p>After injecting a payload, check the <code>Console</code> tab. If a <code>console.log("XSS")</code> payload ran, you will see the output here — even if the page looks normal.</p>
-        </div>
-      </div>
-      <div class="dt-step">
-        <div class="dt-num">3</div>
-        <div class="dt-content">
-          <h4>Use the Elements tab to find reflection points</h4>
-          <p>After sending a probe marker like <code>xsstest123</code>, use <code>Ctrl+F</code> inside the Elements tab to find where your string appears in the live DOM — not just the page source.</p>
-        </div>
-      </div>
-      <div class="dt-step">
-        <div class="dt-num">4</div>
-        <div class="dt-content">
-          <h4>Use the Network tab to watch requests</h4>
-          <p>Check the <code>Network</code> tab to see what data is being sent to the server. For DOM-based XSS, you will notice the payload <strong>never appears</strong> in any outgoing request.</p>
-        </div>
-      </div>
-      <div class="dt-step">
-        <div class="dt-num">5</div>
-        <div class="dt-content">
-          <h4>Use the Sources tab to trace DOM-based XSS</h4>
-          <p>In the <code>Sources</code> tab, use <code>Ctrl+Shift+F</code> to search all JavaScript files for dangerous sinks like <code>innerHTML</code>, <code>document.write</code>, or <code>eval</code>.</p>
-        </div>
+      </div><!-- /guided-body -->
+      <div class="guided-footer">
+        <span class="g-counter" id="gCounter">1 / 5</span>
+        <button class="g-btn" id="gBtn">Next →</button>
       </div>
     </div>
   </div>
 
   <div class="divider"></div>
 
-  <!-- TESTING CHECKLIST -->
-  <div class="concept-block" id="checklist">
-    <h2>✅ Professional Testing Checklist</h2>
-    <p>Tick off each step as you work through a real or practice target. This is the habit professional testers build.</p>
+  <!-- ══════════════════════════════════════
+       BLOCK 3 — TRY IT YOURSELF
+  ══════════════════════════════════════ -->
+  <div class="block">
+    <div class="block-label">Hands-On</div>
+    <h2>3 · Now You Try</h2>
+    <p>Follow the same five steps yourself on the lab below. Each tab is one step. Complete them in order — hints are available if you get stuck.</p>
 
-    <div class="checklist-wrap">
-      <div class="cl-header">
-        <h3>🗒️ XSS Manual Testing Checklist</h3>
-        <span class="cl-progress-text" id="clProgressText">0 / 12</span>
+    <div class="try-wrap">
+      <div class="try-header">
+        <span>🧪</span>
+        <h3>Lab — Vulnerable Search App</h3>
       </div>
-      <div class="cl-body">
-        <p>Check each item as you complete it. Progress is tracked above.</p>
-        <div class="cl-progress-bar"><div class="cl-progress-fill" id="clFill"></div></div>
-
-        <div class="cl-section-title">Phase 1 — Reconnaissance</div>
-        <div class="cl-item" data-id="0"><div class="cl-checkbox">✓</div><div class="cl-item-text">List all input points: URL params, form fields, headers, cookies</div></div>
-        <div class="cl-item" data-id="1"><div class="cl-checkbox">✓</div><div class="cl-item-text">Identify which inputs are reflected back in any page response</div></div>
-        <div class="cl-item" data-id="2"><div class="cl-checkbox">✓</div><div class="cl-item-text">Check page source and DevTools Elements tab for your probe marker</div></div>
-
-        <div class="cl-section-title">Phase 2 — Context Analysis</div>
-        <div class="cl-item" data-id="3"><div class="cl-checkbox">✓</div><div class="cl-item-text">Determine context: between HTML tags, inside attribute, or inside JS?</div></div>
-        <div class="cl-item" data-id="4"><div class="cl-checkbox">✓</div><div class="cl-item-text">Check if special characters (&lt; &gt; " ') are encoded or passed raw</div></div>
-        <div class="cl-item" data-id="5"><div class="cl-checkbox">✓</div><div class="cl-item-text">Test for DOM-based sinks: search JS for innerHTML, eval, document.write</div></div>
-
-        <div class="cl-section-title">Phase 3 — Exploitation Attempt</div>
-        <div class="cl-item" data-id="6"><div class="cl-checkbox">✓</div><div class="cl-item-text">Try a basic &lt;script&gt;alert(1)&lt;/script&gt; payload</div></div>
-        <div class="cl-item" data-id="7"><div class="cl-checkbox">✓</div><div class="cl-item-text">Try event-based payloads: &lt;img src=x onerror=alert(1)&gt;</div></div>
-        <div class="cl-item" data-id="8"><div class="cl-checkbox">✓</div><div class="cl-item-text">Try filter bypasses: uppercase, mixed case, nested tags</div></div>
-        <div class="cl-item" data-id="9"><div class="cl-checkbox">✓</div><div class="cl-item-text">Confirm execution in the DevTools Console tab</div></div>
-
-        <div class="cl-section-title">Phase 4 — Documentation</div>
-        <div class="cl-item" data-id="10"><div class="cl-checkbox">✓</div><div class="cl-item-text">Note the XSS type (Reflected / Stored / DOM-based)</div></div>
-        <div class="cl-item" data-id="11"><div class="cl-checkbox">✓</div><div class="cl-item-text">Record the exact input field, URL, and payload that triggered it</div></div>
-
-        <div class="cl-done-msg" id="clDoneMsg">🎉 Checklist complete — you are ready for the mini project!</div>
-        <button class="cl-reset-btn" id="clResetBtn">↺ Reset Checklist</button>
+      <div class="try-steps-row" id="tryStepsRow">
+        <button class="try-step-btn active" data-step="0">1 · Find Input</button>
+        <button class="try-step-btn" data-step="1">2 · Find Context</button>
+        <button class="try-step-btn" data-step="2">3 · Inject</button>
+        <button class="try-step-btn" data-step="3">4 · Confirm</button>
+        <button class="try-step-btn" data-step="4">5 · Observe</button>
       </div>
+      <div class="try-body">
+
+        <!-- Step 1 -->
+        <div class="try-panel active" id="try0">
+          <div class="try-instruction">
+            <strong>Your task — Step 1</strong>
+            Type any normal word into the search box below and click Search. Confirm that your input appears in the result.
+          </div>
+          <div class="fake-app">
+            <div class="fa-bar">🌐 vulnerable-shop.example.com/search</div>
+            <div class="fa-body">
+              <label>Search</label>
+              <input class="fa-input" id="try0-input" type="text" placeholder="Type a word, e.g. laptop"/>
+              <button class="fa-btn" id="try0-btn">Search</button>
+              <div class="fa-result-lbl">Result</div>
+              <div class="fa-result" id="try0-result">Results appear here.</div>
+            </div>
+          </div>
+          <div class="try-feedback" id="try0-fb"></div>
+          <button class="try-next-btn" id="try0-next">Step 2 → Find Context</button>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="try-panel" id="try1">
+          <div class="try-instruction">
+            <strong>Your task — Step 2</strong>
+            In a real test you would use DevTools. Here, click <strong>"Inspect Source"</strong> to see where your input lands in the HTML. Then answer the question below.
+          </div>
+          <div class="fake-app">
+            <div class="fa-bar">🌐 vulnerable-shop.example.com/search</div>
+            <div class="fa-body">
+              <div class="fa-result-lbl">Simulated Page Source</div>
+              <div class="fa-result" id="try1-source" style="font-family:'Courier New',monospace;font-size:0.82rem;line-height:1.7;">Click "Inspect Source" to reveal.</div>
+              <button class="fa-btn" id="try1-inspect-btn" style="margin-top:0.6rem;">Inspect Source</button>
+            </div>
+          </div>
+          <div id="try1-question" style="display:none;">
+            <p style="font-size:0.875rem;color:var(--dark);font-weight:700;margin:1rem 0 0.6rem;">Where does the input appear?</p>
+            <div style="display:flex;gap:0.6rem;flex-wrap:wrap;" id="try1-options">
+              <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;" data-correct="false">Inside a JS script block</button>
+              <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;" data-correct="true">Between HTML tags</button>
+              <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;" data-correct="false">Inside an attribute value</button>
+            </div>
+          </div>
+          <div class="try-feedback" id="try1-fb"></div>
+          <button class="try-next-btn" id="try1-next">Step 3 → Inject</button>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="try-panel" id="try2">
+          <div class="try-instruction">
+            <strong>Your task — Step 3</strong>
+            You know the context is <em>between HTML tags</em>. Choose the payload that fits this context and type it into the search box.
+          </div>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem;" id="try2-choices">
+            <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;font-family:'Courier New',monospace;font-size:0.8rem;" data-payload='&lt;script&gt;alert(1)&lt;/script&gt;' data-correct="true">&lt;script&gt;alert(1)&lt;/script&gt;</button>
+            <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;font-family:'Courier New',monospace;font-size:0.8rem;" data-payload='" onmouseover="alert(1)' data-correct="false">" onmouseover="alert(1)</button>
+            <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;font-family:'Courier New',monospace;font-size:0.8rem;" data-payload='"; alert(1); //' data-correct="false">"; alert(1); //</button>
+          </div>
+          <div class="fake-app" id="try2-app" style="display:none;">
+            <div class="fa-bar">🌐 vulnerable-shop.example.com/search</div>
+            <div class="fa-body">
+              <div class="fa-result-lbl">Injecting payload...</div>
+              <div class="fa-result" id="try2-result"></div>
+            </div>
+          </div>
+          <button class="hint-btn" id="try2-hint-btn">💡 Hint</button>
+          <div class="hint-reveal" id="try2-hint">You are in Context A — between HTML tags. A full tag like <code>&lt;script&gt;</code> can be injected directly. The other two payloads are for attribute and script contexts.</div>
+          <div class="try-feedback" id="try2-fb"></div>
+          <button class="try-next-btn" id="try2-next">Step 4 → Confirm</button>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="try-panel" id="try3">
+          <div class="try-instruction">
+            <strong>Your task — Step 4</strong>
+            In a real test you would check the browser Console. Below is a simulated DevTools console. Click <strong>"Open Console"</strong> and look for confirmation.
+          </div>
+          <div style="background:#0f172a;border-radius:10px;overflow:hidden;margin-bottom:0.75rem;">
+            <div style="background:#1e293b;padding:0.5rem 1rem;font-size:0.75rem;color:#64748b;font-weight:700;display:flex;gap:1rem;">
+              <span style="color:#94a3b8;">Elements</span>
+              <span style="color:#94a3b8;">Network</span>
+              <span style="color:white;border-bottom:2px solid white;padding-bottom:2px;">Console</span>
+              <span style="color:#94a3b8;">Sources</span>
+            </div>
+            <div style="padding:0.85rem 1rem;font-family:'Courier New',monospace;font-size:0.8rem;min-height:60px;" id="try3-console">
+              <div style="color:#475569;font-style:italic;">→ Click "Open Console" to check for execution</div>
+            </div>
+          </div>
+          <button class="fa-btn" id="try3-console-btn">Open Console</button>
+          <div class="try-feedback" id="try3-fb"></div>
+          <button class="try-next-btn" id="try3-next">Step 5 → Observe</button>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="try-panel" id="try4">
+          <div class="try-instruction">
+            <strong>Your task — Step 5</strong>
+            What did you just find? Select the correct observation below.
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;" id="try4-options">
+            <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;text-align:left;" data-correct="false">The app is safe — the script tag was encoded before rendering</button>
+            <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;text-align:left;" data-correct="true">The app is vulnerable to Reflected XSS in Context A — script executed</button>
+            <button class="fa-btn" style="background:#f1f5f9;color:var(--dark);border:2px solid #e2e8f0;text-align:left;" data-correct="false">The app is vulnerable to Stored XSS — the payload was saved to the database</button>
+          </div>
+          <div class="try-feedback" id="try4-fb"></div>
+          <div id="try4-complete" style="display:none;margin-top:1rem;padding:1rem;background:var(--gl);border-radius:8px;font-size:0.875rem;color:var(--green);font-weight:700;">
+            🎉 Lab complete! You followed the full testing methodology. Now document your finding below.
+          </div>
+        </div>
+
+      </div><!-- /try-body -->
     </div>
   </div>
 
   <div class="divider"></div>
 
-  <div class="info-box blue">
-    <div class="info-icon">🚀</div>
-    <p><strong>Coming up — Section 5 (Mini Project):</strong> You will receive a pre-built vulnerable app with two hidden XSS flaws. Your job: find both, document them using this checklist format, then patch them.</p>
+  <!-- ══════════════════════════════════════
+       BLOCK 4 — 3 PAYLOADS
+  ══════════════════════════════════════ -->
+  <div class="block">
+    <div class="block-label">Reference</div>
+    <h2>4 · Three Payloads You Must Know</h2>
+    <p>You do not need a library of 50 payloads. You need to understand three — one per context. Click each card to expand it.</p>
+
+    <div class="payload-cards">
+
+      <div class="payload-card">
+        <div class="pc-header" id="pch0">
+          <div class="pc-left">
+            <div class="pc-num n1">1</div>
+            <div>
+              <div class="pc-title">The Classic — Between HTML Tags</div>
+              <div class="pc-subtitle">Context A · Works when input lands between tag elements</div>
+            </div>
+          </div>
+          <span class="pc-arrow">▼</span>
+        </div>
+        <div class="pc-body" id="pcb0">
+          <p class="pc-desc">When your input appears between HTML tags like <code>&lt;p&gt;YOUR INPUT&lt;/p&gt;</code>, you can inject a complete new tag. The browser parses it as HTML and executes it.</p>
+          <div class="pc-code">
+            <span class="cc-m">// Payload</span><br/>
+            <span class="cc-r">&lt;script&gt;alert(document.domain)&lt;/script&gt;</span><br/><br/>
+            <span class="cc-m">// What the vulnerable page renders</span><br/>
+            &lt;p&gt;Results for: <span class="cc-r">&lt;script&gt;alert(document.domain)&lt;/script&gt;</span>&lt;/p&gt;
+          </div>
+          <p class="pc-use"><strong>When to use:</strong> Your probe marker appears as visible text on the page — not inside a tag attribute or quote marks.</p>
+        </div>
+      </div>
+
+      <div class="payload-card">
+        <div class="pc-header" id="pch1">
+          <div class="pc-left">
+            <div class="pc-num n2">2</div>
+            <div>
+              <div class="pc-title">The Attribute Breakout — Inside a Tag Attribute</div>
+              <div class="pc-subtitle">Context B · Works when input is inside value="..."</div>
+            </div>
+          </div>
+          <span class="pc-arrow">▼</span>
+        </div>
+        <div class="pc-body" id="pcb1">
+          <p class="pc-desc">When your input lands inside an attribute value like <code>value="YOUR INPUT"</code>, a plain script tag will not work — it is trapped inside the quotes. You need to <em>close</em> the attribute first, then add an event handler.</p>
+          <div class="pc-code">
+            <span class="cc-m">// Payload</span><br/>
+            <span class="cc-r">" onmouseover="alert(1)</span><br/><br/>
+            <span class="cc-m">// What the vulnerable page renders</span><br/>
+            &lt;input value=<span class="cc-r">"" onmouseover="alert(1)</span>"&gt;<br/><br/>
+            <span class="cc-m">// The " closes the value, onmouseover adds a new event</span>
+          </div>
+          <p class="pc-use"><strong>When to use:</strong> Your probe marker appears inside a tag attribute in the Elements tab — surrounded by double quotes.</p>
+        </div>
+      </div>
+
+      <div class="payload-card">
+        <div class="pc-header" id="pch2">
+          <div class="pc-left">
+            <div class="pc-num n3">3</div>
+            <div>
+              <div class="pc-title">The No-Script Payload — Event Handler Only</div>
+              <div class="pc-subtitle">All contexts · Works when script tags are filtered</div>
+            </div>
+          </div>
+          <span class="pc-arrow">▼</span>
+        </div>
+        <div class="pc-body" id="pcb2">
+          <p class="pc-desc">Many applications block the word <code>script</code> but forget that HTML event attributes also execute JavaScript. The <code>onerror</code> on an image fires when the browser cannot load the image — which is instant if you use a fake source.</p>
+          <div class="pc-code">
+            <span class="cc-m">// Payload — no script tag needed</span><br/>
+            <span class="cc-r">&lt;img src="x" onerror="alert(1)"&gt;</span><br/><br/>
+            <span class="cc-m">// Browser tries to load "x", fails immediately,</span><br/>
+            <span class="cc-m">// triggers onerror → JavaScript executes</span>
+          </div>
+          <p class="pc-use"><strong>When to use:</strong> The classic payload does not work — try this as your second option in any context where HTML tags are rendered.</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-</div>
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       BLOCK 5 — DOCUMENT YOUR FINDING
+  ══════════════════════════════════════ -->
+  <div class="block">
+    <div class="block-label">Document It</div>
+    <h2>5 · Write Your First Finding Report</h2>
+    <p>A vulnerability you cannot explain clearly is a vulnerability no one will fix. Fill in the form below based on what you found in the lab. This is the same format you will use in the Section 5 project.</p>
+
+    <div class="report-form">
+      <h3>📋 XSS Finding Report</h3>
+      <p class="rf-sub">Based on your lab test in Step 3. Fill in every field.</p>
+
+      <div class="rf-row">
+        <div class="rf-field">
+          <label class="rf-label">Vulnerability Type <span>*</span></label>
+          <select class="rf-select" id="rf-type">
+            <option value="">— Select —</option>
+            <option value="Reflected XSS">Reflected XSS</option>
+            <option value="Stored XSS">Stored XSS</option>
+            <option value="DOM-Based XSS">DOM-Based XSS</option>
+          </select>
+        </div>
+        <div class="rf-field">
+          <label class="rf-label">Injection Context <span>*</span></label>
+          <select class="rf-select" id="rf-context">
+            <option value="">— Select —</option>
+            <option value="Between HTML tags (Context A)">Between HTML tags (Context A)</option>
+            <option value="Inside an attribute value (Context B)">Inside an attribute value (Context B)</option>
+            <option value="Inside a JavaScript block (Context C)">Inside a JavaScript block (Context C)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="rf-field">
+        <label class="rf-label">Location (URL or input field) <span>*</span></label>
+        <input class="rf-input" id="rf-location" type="text" placeholder="e.g. GET /search?q= or the username field"/>
+      </div>
+
+      <div class="rf-field">
+        <label class="rf-label">Payload Used <span>*</span></label>
+        <input class="rf-input" id="rf-payload" type="text" placeholder="e.g. &lt;script&gt;alert(1)&lt;/script&gt;"/>
+      </div>
+
+      <div class="rf-field">
+        <label class="rf-label">What can an attacker do with this? <span>*</span></label>
+        <textarea class="rf-textarea" id="rf-impact" placeholder="e.g. An attacker can steal session cookies via document.cookie and log in as any victim who clicks the malicious link..."></textarea>
+      </div>
+
+      <div class="rf-field">
+        <label class="rf-label">Suggested Fix</label>
+        <textarea class="rf-textarea" id="rf-fix" placeholder="e.g. Replace innerHTML with textContent, or sanitize input using DOMPurify..."></textarea>
+      </div>
+
+      <button class="rf-submit-btn" id="rfSubmit">Submit Finding Report</button>
+
+      <div class="rf-result" id="rfResult">
+        <h4>✅ Finding Saved — Well Done!</h4>
+        <div class="rf-result-row"><strong>Type</strong><span id="rf-out-type"></span></div>
+        <div class="rf-result-row"><strong>Context</strong><span id="rf-out-context"></span></div>
+        <div class="rf-result-row"><strong>Location</strong><span id="rf-out-location"></span></div>
+        <div class="rf-result-row"><strong>Payload</strong><span id="rf-out-payload"></span></div>
+        <div class="rf-result-row"><strong>Impact</strong><span id="rf-out-impact"></span></div>
+        <div class="rf-result-row" id="rf-out-fix-row"><strong>Fix</strong><span id="rf-out-fix"></span></div>
+        <p style="margin-top:0.85rem;font-size:0.83rem;color:var(--green);">Keep this format in mind — Section 5 asks you to produce exactly this for two real vulnerabilities.</p>
+      </div>
+    </div>
+
+    <div class="info-box blue">
+      <div class="info-icon">🚀</div>
+      <p><strong>You are ready for Section 5.</strong> You will receive a pre-built vulnerable app with two hidden XSS flaws. Your job is to find both using this exact method, then patch them.</p>
+    </div>
+
+  </div><!-- /block -->
+
+</div><!-- /content-wrap -->
 
 <!-- NAV -->
 <div class="nav-buttons">
@@ -634,228 +764,321 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
-  /* ══ PAYLOAD LIBRARY TABS ══ */
-  var plTabBtns = document.querySelectorAll(".pl-tab");
-  plTabBtns.forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      plTabBtns.forEach(function(b) { b.classList.remove("active"); });
-      document.querySelectorAll(".pl-panel").forEach(function(p) { p.classList.remove("active"); });
-      btn.classList.add("active");
-      document.getElementById("pl-" + btn.getAttribute("data-panel")).classList.add("active");
-    });
-  });
+  /* ══ GUIDED WALKTHROUGH ══ */
+  var totalSteps = 5;
+  var currentStep = 0;
+  var gDots = document.getElementById("gDots");
 
-  /* ── Copy payloads ── */
-  document.querySelectorAll(".payload-row").forEach(function(row) {
-    row.addEventListener("click", function() {
-      var text = row.getAttribute("data-payload");
-      // Decode HTML entities
-      var el = document.createElement("textarea");
-      el.innerHTML = text;
-      var decoded = el.value;
-      navigator.clipboard.writeText(decoded).then(function() {
-        row.classList.add("copied");
-        var copyBtn = row.querySelector(".pr-copy");
-        if (copyBtn) { copyBtn.textContent = "Copied!"; }
-        setTimeout(function() {
-          row.classList.remove("copied");
-          if (copyBtn) { copyBtn.textContent = "Copy"; }
-        }, 1800);
-      }).catch(function() {
-        // Fallback for older browsers
-        row.classList.add("copied");
-        setTimeout(function() { row.classList.remove("copied"); }, 1800);
-      });
-    });
-  });
-
-  /* ══ CONTEXT LAB TABS ══ */
-  var ctxTabBtns = document.querySelectorAll(".ctx-tab");
-  ctxTabBtns.forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      ctxTabBtns.forEach(function(b) { b.classList.remove("active"); });
-      document.querySelectorAll(".ctx-panel").forEach(function(p) { p.classList.remove("active"); });
-      btn.classList.add("active");
-      document.getElementById(btn.getAttribute("data-ctx")).classList.add("active");
-    });
-  });
-
-  /* ── Log helper ── */
-  function addLog(logId, msg, type) {
-    var log = document.getElementById(logId);
-    var t = new Date().toLocaleTimeString("en-GB");
-    var d = document.createElement("div");
-    d.className = "ll-line";
-    d.innerHTML = "<span class='ll-t'>[" + t + "]</span> <span class='ll-" + type + "'>" + msg + "</span>";
-    log.appendChild(d);
-    log.scrollTop = log.scrollHeight;
+  // Build dots
+  for (var i = 0; i < totalSteps; i++) {
+    var dot = document.createElement("div");
+    dot.className = "g-dot" + (i === 0 ? " active" : "");
+    dot.textContent = i + 1;
+    dot.setAttribute("data-step", i);
+    gDots.appendChild(dot);
   }
 
-  /* ── Detect if input looks like an attack ── */
-  function isAttack(input) {
-    return /<[a-zA-Z]/.test(input) || /on\w+\s*=/i.test(input) || /javascript:/i.test(input);
+  var stepLabels = [
+    "Find the input",
+    "Identify the context",
+    "Choose and inject a payload",
+    "Confirm execution",
+    "Document the finding"
+  ];
+
+  function updateGuided() {
+    document.querySelectorAll(".g-panel").forEach(function(p) { p.classList.remove("active"); });
+    document.getElementById("gp" + currentStep).classList.add("active");
+
+    document.querySelectorAll(".g-dot").forEach(function(d, idx) {
+      d.classList.remove("active", "done");
+      if (idx < currentStep)  { d.classList.add("done"); }
+      if (idx === currentStep){ d.classList.add("active"); }
+    });
+
+    document.getElementById("gTitle").textContent = "Step " + (currentStep + 1) + " / " + totalSteps + " — " + stepLabels[currentStep];
+    document.getElementById("gCounter").textContent = (currentStep + 1) + " / " + totalSteps;
+
+    var btn = document.getElementById("gBtn");
+    if (currentStep === totalSteps - 1) {
+      btn.textContent = "✓ Done";
+      btn.classList.add("done");
+    } else {
+      btn.textContent = "Next →";
+      btn.classList.remove("done");
+    }
   }
 
-  /* ── Strip script tags for demo safety ── */
-  function safeInner(input) {
-    return input.replace(/<script[\s\S]*?<\/script>/gi, "[&lt;script&gt; blocked in sandbox]");
-  }
+  document.getElementById("gBtn").addEventListener("click", function() {
+    if (currentStep < totalSteps - 1) {
+      currentStep++;
+      updateGuided();
+    }
+  });
 
-  /* ══ CTX 1 — URL Param ══ */
-  document.getElementById("ctx1-btn").addEventListener("click", function() {
-    var val = document.getElementById("ctx1-input").value.trim();
-    if (!val) { return; }
-    var result = document.getElementById("ctx1-result");
-    if (isAttack(val)) {
-      result.innerHTML = "Results for: " + safeInner(val);
-      addLog("ctx1-log", "innerHTML used — HTML in input was rendered by the browser", "atk");
-      if (/onerror|onload|onmouseover|onfocus/i.test(val)) {
-        addLog("ctx1-log", "Event handler detected — JavaScript executed without a script tag!", "atk");
+  document.querySelectorAll(".g-dot").forEach(function(dot) {
+    dot.addEventListener("click", function() {
+      var target = parseInt(dot.getAttribute("data-step"));
+      if (!isNaN(target)) {
+        currentStep = target;
+        updateGuided();
       }
-    } else {
-      result.textContent = "Results for: " + val;
-      addLog("ctx1-log", "Safe — textContent output, no HTML parsing", "safe");
-    }
-  });
-  document.getElementById("ctx1-input").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") { document.getElementById("ctx1-btn").click(); }
+    });
   });
 
-  /* ══ CTX 2 — Comment Box (Stored) ══ */
-  var storedComments = [];
-  document.getElementById("ctx2-submit-btn").addEventListener("click", function() {
-    var val = document.getElementById("ctx2-input").value.trim();
-    if (!val) { return; }
-    storedComments.push(val);
-    document.getElementById("ctx2-input").value = "";
-    renderComments();
-    if (isAttack(val)) {
-      addLog("ctx2-log", "Payload stored! Will execute for every user who loads this page.", "atk");
-    } else {
-      addLog("ctx2-log", "Comment stored: \"" + val.substring(0, 40) + "\"", "safe");
-    }
-  });
-  document.getElementById("ctx2-input").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") { document.getElementById("ctx2-submit-btn").click(); }
-  });
+  updateGuided();
 
-  function renderComments() {
-    var box = document.getElementById("ctx2-comments");
-    box.innerHTML = "";
-    storedComments.forEach(function(c, i) {
-      var div = document.createElement("div");
-      div.style.cssText = "padding:0.35rem 0; border-bottom:1px solid #f1f5f9; font-size:0.875rem;";
-      // Simulate vulnerable innerHTML rendering
-      div.innerHTML = "<strong style='color:#64748b;font-size:0.72rem;'>User_" + (i+1) + ":</strong> " + safeInner(c);
-      box.appendChild(div);
+
+  /* ══ TRY-IT LAB ══ */
+  var tryStepsDone = { 0: false, 1: false, 2: false, 3: false, 4: false };
+  var lastProbeWord = "";
+
+  function showTryStep(idx) {
+    document.querySelectorAll(".try-panel").forEach(function(p) { p.classList.remove("active"); });
+    document.getElementById("try" + idx).classList.add("active");
+    document.querySelectorAll(".try-step-btn").forEach(function(b, i) {
+      b.classList.remove("active");
+      if (i === idx) { b.classList.add("active"); }
     });
   }
 
-  /* ══ CTX 3 — Attribute Injection ══ */
-  document.getElementById("ctx3-btn").addEventListener("click", function() {
-    var val = document.getElementById("ctx3-input").value.trim();
-    if (!val) { return; }
-    var result = document.getElementById("ctx3-result");
-    result.innerHTML = "";
-
-    // Simulate attribute context
-    var div = document.createElement("div");
-    div.style.cssText = "background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:0.6rem 0.85rem;font-size:0.875rem;cursor:pointer;color:#1e40af;font-weight:600;";
-
-    if (/"\s*on\w+\s*=/i.test(val) || /'\s*on\w+\s*=/i.test(val)) {
-      // Attribute breakout detected
-      div.textContent = "Welcome, " + val.replace(/["']/g, "");
-      // Add the event handler dynamically to simulate the breakout
-      try {
-        div.setAttribute("data-injected", "true");
-        div.addEventListener("mouseover", function() {
-          div.style.background = "#fca5a5";
-          div.textContent = "⚠ onmouseover fired! Attribute injection worked.";
-        });
-      } catch(e) {}
-      addLog("ctx3-log", "Attribute breakout detected — event handler injected into element!", "atk");
-      addLog("ctx3-log", "Hover the blue box above to trigger the event handler.", "info");
-    } else if (isAttack(val)) {
-      div.innerHTML = "Welcome, " + safeInner(val);
-      addLog("ctx3-log", "HTML tags in input rendered via innerHTML", "atk");
-    } else {
-      div.setAttribute("title", val);
-      div.textContent = "Welcome, " + val + " (hover me for tooltip)";
-      addLog("ctx3-log", "Safe input — rendered as text inside attribute: title=\"" + val + "\"", "safe");
-    }
-    result.appendChild(div);
-  });
-  document.getElementById("ctx3-input").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") { document.getElementById("ctx3-btn").click(); }
+  document.querySelectorAll(".try-step-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var step = parseInt(btn.getAttribute("data-step"));
+      showTryStep(step);
+    });
   });
 
-  /* ══ CTX 4 — DOM Hash ══ */
-  document.getElementById("ctx4-btn").addEventListener("click", function() {
-    var val = document.getElementById("ctx4-input").value.trim();
+  /* Step 1 — Find Input */
+  document.getElementById("try0-btn").addEventListener("click", function() {
+    var val = document.getElementById("try0-input").value.trim();
     if (!val) { return; }
-    var result = document.getElementById("ctx4-result");
-    var urlSuffix = document.getElementById("ctx4-url-suffix");
+    lastProbeWord = val;
+    document.getElementById("try0-result").textContent = "You searched for: " + val;
 
-    // Simulate URL hash update
-    urlSuffix.textContent = "#" + encodeURIComponent(val).substring(0, 30);
+    var hasTag = /<[a-zA-Z]/.test(val) || /on\w+\s*=/i.test(val);
+    var fb = document.getElementById("try0-fb");
+    var nextBtn = document.getElementById("try0-next");
 
-    addLog("ctx4-log", "Simulating: window.location.hash = '#" + val.substring(0, 30) + "'", "info");
-    addLog("ctx4-log", "Note: hash fragment is NEVER sent to the server", "info");
-
-    if (isAttack(val)) {
-      // Simulate vulnerable innerHTML reading the hash
-      result.innerHTML = "Welcome, " + safeInner(val);
-      addLog("ctx4-log", "DOM-based XSS: JS read the hash and wrote it via innerHTML", "atk");
-      if (/onerror|onload/i.test(val)) {
-        addLog("ctx4-log", "Event handler in payload — would execute in a real app!", "atk");
-      }
+    if (hasTag) {
+      fb.className = "try-feedback bad";
+      fb.textContent = "⚠ Use a plain word for the probe — like 'laptop' or your name. Save payloads for Step 3.";
     } else {
-      result.textContent = "Welcome, " + val;
-      addLog("ctx4-log", "Safe input — rendered as plain text", "safe");
+      fb.className = "try-feedback ok";
+      fb.textContent = "✅ Good — your word \"" + val + "\" appears in the result. Reflection confirmed. Move to Step 2.";
+      tryStepsDone[0] = true;
+      nextBtn.style.display = "inline-block";
+      document.querySelector(".try-step-btn[data-step='0']").classList.add("completed");
     }
   });
-  document.getElementById("ctx4-input").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") { document.getElementById("ctx4-btn").click(); }
+  document.getElementById("try0-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") { document.getElementById("try0-btn").click(); }
+  });
+  document.getElementById("try0-next").addEventListener("click", function() { showTryStep(1); });
+
+  /* Step 2 — Find Context */
+  document.getElementById("try1-inspect-btn").addEventListener("click", function() {
+    var probe = lastProbeWord || "laptop";
+    document.getElementById("try1-source").innerHTML =
+      '&lt;div class="search-page"&gt;<br>' +
+      '&nbsp;&nbsp;&lt;h2&gt;Search Results&lt;/h2&gt;<br>' +
+      '&nbsp;&nbsp;&lt;p&gt;You searched for: <span style="background:#fde68a;color:#78350f;padding:0 3px;border-radius:3px;font-weight:700;">' + escText(probe) + '</span>&lt;/p&gt;<br>' +
+      '&nbsp;&nbsp;&lt;ul&gt; ... &lt;/ul&gt;<br>' +
+      '&lt;/div&gt;';
+    document.getElementById("try1-question").style.display = "block";
   });
 
-  /* ══ TESTING CHECKLIST ══ */
-  var checked = {};
-  var totalItems = 12;
+  document.querySelectorAll("#try1-options button").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var isCorrect = btn.getAttribute("data-correct") === "true";
+      var fb = document.getElementById("try1-fb");
+      var nextBtn = document.getElementById("try1-next");
+      document.querySelectorAll("#try1-options button").forEach(function(b) { b.disabled = true; });
 
-  document.querySelectorAll(".cl-item").forEach(function(item) {
-    item.addEventListener("click", function() {
-      var id = item.getAttribute("data-id");
-      checked[id] = !checked[id];
-      if (checked[id]) {
-        item.classList.add("checked");
+      if (isCorrect) {
+        btn.style.background = "var(--gl)";
+        btn.style.borderColor = "var(--green)";
+        btn.style.color = "var(--green)";
+        fb.className = "try-feedback ok";
+        fb.textContent = "✅ Correct! The input appears between <p> tags — Context A. That means a full tag payload like <script> will work.";
+        tryStepsDone[1] = true;
+        nextBtn.style.display = "inline-block";
+        document.querySelector(".try-step-btn[data-step='1']").classList.add("completed");
       } else {
-        item.classList.remove("checked");
+        btn.style.background = "var(--rl)";
+        btn.style.borderColor = "var(--red)";
+        btn.style.color = "var(--red)";
+        fb.className = "try-feedback bad";
+        fb.textContent = "❌ Look again at the source — the probe word sits between a <p> and </p> tag, not inside quotes or a script block.";
       }
-      updateChecklist();
+    });
+  });
+  document.getElementById("try1-next").addEventListener("click", function() { showTryStep(2); });
+
+  /* Step 3 — Inject */
+  document.querySelectorAll("#try2-choices button").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var isCorrect = btn.getAttribute("data-correct") === "true";
+      var payload = btn.getAttribute("data-payload") || "";
+      var fb = document.getElementById("try2-fb");
+      var app = document.getElementById("try2-app");
+      var nextBtn = document.getElementById("try2-next");
+
+      document.querySelectorAll("#try2-choices button").forEach(function(b) { b.disabled = true; });
+
+      if (isCorrect) {
+        btn.style.background = "var(--gl)";
+        btn.style.borderColor = "var(--green)";
+        btn.style.color = "var(--green)";
+        app.style.display = "block";
+        document.getElementById("try2-result").innerHTML =
+          'You searched for: <span style="background:#fca5a5;color:#7f1d1d;padding:0 3px;border-radius:3px;font-weight:700;">&lt;script&gt;alert(1)&lt;/script&gt;</span><br>' +
+          '<span style="color:var(--red);font-size:0.8rem;margin-top:0.4rem;display:block;">⚠ Browser parsed this as HTML — script tag executed.</span>';
+        fb.className = "try-feedback ok";
+        fb.textContent = "✅ Correct! The <script> tag fits Context A — it was injected between the <p> tags and the browser executed it.";
+        tryStepsDone[2] = true;
+        nextBtn.style.display = "inline-block";
+        document.querySelector(".try-step-btn[data-step='2']").classList.add("completed");
+      } else {
+        btn.style.background = "var(--rl)";
+        btn.style.borderColor = "var(--red)";
+        btn.style.color = "var(--red)";
+        fb.className = "try-feedback bad";
+        fb.textContent = "❌ That payload is for a different context. You are between HTML tags — choose the payload that injects a complete new tag.";
+      }
+    });
+  });
+  document.getElementById("try2-hint-btn").addEventListener("click", function() {
+    var h = document.getElementById("try2-hint");
+    h.classList.toggle("show");
+    document.getElementById("try2-hint-btn").textContent = h.classList.contains("show") ? "Hide Hint" : "💡 Hint";
+  });
+  document.getElementById("try2-next").addEventListener("click", function() { showTryStep(3); });
+
+  /* Step 4 — Confirm */
+  document.getElementById("try3-console-btn").addEventListener("click", function() {
+    var con = document.getElementById("try3-console");
+    con.innerHTML =
+      '<div style="color:#475569;font-size:0.72rem;margin-bottom:0.4rem;">— Console output —</div>' +
+      '<div style="color:#86efac;">▶ Script executed on: vulnerable-shop.example.com</div>' +
+      '<div style="color:#86efac;">▶ alert(1) called — XSS confirmed</div>' +
+      '<div style="color:#fca5a5;margin-top:0.3rem;">⚠ document.cookie accessible: session=abc123xyz</div>';
+    document.getElementById("try3-fb").className = "try-feedback ok";
+    document.getElementById("try3-fb").textContent = "✅ Execution confirmed. The console shows the script ran. In a real attack, session cookies are now visible to the attacker.";
+    tryStepsDone[3] = true;
+    document.getElementById("try3-next").style.display = "inline-block";
+    document.querySelector(".try-step-btn[data-step='3']").classList.add("completed");
+    document.getElementById("try3-console-btn").disabled = true;
+  });
+  document.getElementById("try3-next").addEventListener("click", function() { showTryStep(4); });
+
+  /* Step 5 — Observe */
+  document.querySelectorAll("#try4-options button").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var isCorrect = btn.getAttribute("data-correct") === "true";
+      var fb = document.getElementById("try4-fb");
+      document.querySelectorAll("#try4-options button").forEach(function(b) { b.disabled = true; });
+
+      if (isCorrect) {
+        btn.style.background = "var(--gl)";
+        btn.style.borderColor = "var(--green)";
+        btn.style.color = "var(--green)";
+        fb.className = "try-feedback ok";
+        fb.textContent = "✅ Exactly right. Reflected XSS, Context A — the search parameter reflects unsanitized input as live HTML.";
+        tryStepsDone[4] = true;
+        document.getElementById("try4-complete").style.display = "block";
+        document.querySelector(".try-step-btn[data-step='4']").classList.add("completed");
+      } else {
+        btn.style.background = "var(--rl)";
+        btn.style.borderColor = "var(--red)";
+        btn.style.color = "var(--red)";
+        fb.className = "try-feedback bad";
+        if (btn.getAttribute("data-correct") === "false" && btn.textContent.includes("safe")) {
+          fb.textContent = "❌ Not safe — the script executed. If characters were encoded, the tag would appear as visible text, not execute.";
+        } else {
+          fb.textContent = "❌ Not stored — the payload is in the URL parameter and only affects users who visit that specific URL.";
+        }
+      }
     });
   });
 
-  function updateChecklist() {
-    var count = Object.values(checked).filter(Boolean).length;
-    document.getElementById("clProgressText").textContent = count + " / " + totalItems;
-    var pct = (count / totalItems) * 100;
-    document.getElementById("clFill").style.width = pct + "%";
-    if (count === totalItems) {
-      document.getElementById("clDoneMsg").classList.add("show");
-    } else {
-      document.getElementById("clDoneMsg").classList.remove("show");
+
+  /* ══ PAYLOAD CARDS (accordion) ══ */
+  [0, 1, 2].forEach(function(i) {
+    document.getElementById("pch" + i).addEventListener("click", function() {
+      var body = document.getElementById("pcb" + i);
+      var header = document.getElementById("pch" + i);
+      var isOpen = body.classList.contains("open");
+
+      // Close all
+      [0, 1, 2].forEach(function(j) {
+        document.getElementById("pcb" + j).classList.remove("open");
+        document.getElementById("pch" + j).classList.remove("open");
+      });
+
+      // Open clicked if it was closed
+      if (!isOpen) {
+        body.classList.add("open");
+        header.classList.add("open");
+      }
+    });
+  });
+
+  // Open first card by default
+  document.getElementById("pcb0").classList.add("open");
+  document.getElementById("pch0").classList.add("open");
+
+
+  /* ══ MINI REPORT FORM ══ */
+  document.getElementById("rfSubmit").addEventListener("click", function() {
+    var type     = document.getElementById("rf-type").value.trim();
+    var context  = document.getElementById("rf-context").value.trim();
+    var location = document.getElementById("rf-location").value.trim();
+    var payload  = document.getElementById("rf-payload").value.trim();
+    var impact   = document.getElementById("rf-impact").value.trim();
+    var fix      = document.getElementById("rf-fix").value.trim();
+
+    if (!type || !context || !location || !payload || !impact) {
+      var btn = document.getElementById("rfSubmit");
+      btn.textContent = "⚠ Please fill in all required fields";
+      btn.style.background = "var(--red)";
+      setTimeout(function() {
+        btn.textContent = "Submit Finding Report";
+        btn.style.background = "";
+      }, 2000);
+      return;
     }
-  }
 
-  document.getElementById("clResetBtn").addEventListener("click", function() {
-    checked = {};
-    document.querySelectorAll(".cl-item").forEach(function(item) {
-      item.classList.remove("checked");
-    });
-    updateChecklist();
+    document.getElementById("rf-out-type").textContent     = type;
+    document.getElementById("rf-out-context").textContent  = context;
+    document.getElementById("rf-out-location").textContent = location;
+    document.getElementById("rf-out-payload").textContent  = payload;
+    document.getElementById("rf-out-impact").textContent   = impact;
+
+    var fixRow = document.getElementById("rf-out-fix-row");
+    if (fix) {
+      document.getElementById("rf-out-fix").textContent = fix;
+      fixRow.style.display = "block";
+    } else {
+      fixRow.style.display = "none";
+    }
+
+    document.getElementById("rfResult").classList.add("show");
+    document.getElementById("rfResult").scrollIntoView({ behavior:"smooth", block:"nearest" });
   });
+
+
+  /* ══ HELPER ══ */
+  function escText(str) {
+    return str
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
 
 }); // end DOMContentLoaded
 </script>
 </body>
 </html>
+
