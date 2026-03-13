@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Section 4 – Testing for XSS | Web Security</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --primary:#2563eb; --pl:#eff6ff; --accent:#f59e0b;
+      --dark:#1e293b; --text:#334155; --muted:#64748b;
+      --bg:#f8fafc; --white:#fff; --radius:12px;
+      --green:#16a34a; --gl:#f0fdf4;
+      --red:#dc2626; --rl:#fef2f2;
+      --orange:#ea580c; --ol:#fff7ed;
+      --purple:#7c3aed; --pul:#f5f3ff;
+    }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+
+    /* ── HEADER ── */
+    header { background:var(--white); border-bottom:1px solid #e2e8f0; padding:0.85rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:200; box-shadow:0 1px 6px rgba(0,0,0,0.06); }
+    .logo-area { display:flex; align-items:center; gap:0.75rem; }
+    .logo-area img { width:44px; height:44px; border-radius:10px; object-fit:contain; }
+    .site-title { font-size:1rem; font-weight:700; color:var(--dark); }
+    .site-subtitle { font-size:0.75rem; color:var(--muted); }
+    nav a { text-decoration:none; color:var(--muted); font-size:0.875rem; font-weight:600; margin-left:1.5rem; transition:color 0.2s; }
+    nav a:hover { color:var(--primary); }
+
+    /* ── PROGRESS ── */
+    .progress-bar-wrap { background:#e2e8f0; height:4px; }
+    .progress-bar-fill { background:var(--primary); height:4px; }
+
+    /* ── HERO ── */
+    .section-hero { background:linear-gradient(135deg,#064e3b 0%,#065f46 50%,#047857 100%); color:white; padding:3rem 2rem 2.5rem; }
+    .section-hero-inner { max-width:820px; margin:0 auto; }
+    .breadcrumb { font-size:0.8rem; opacity:0.75; margin-bottom:0.75rem; }
+    .breadcrumb a { color:white; text-decoration:none; opacity:0.8; }
+    .section-badge { display:inline-block; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:white; font-size:0.75rem; font-weight:700; padding:0.25rem 0.8rem; border-radius:999px; margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:0.06em; }
+    .section-hero h1 { font-size:clamp(1.5rem,3vw,2.2rem); font-weight:800; margin-bottom:0.6rem; }
+    .section-hero p { font-size:0.95rem; opacity:0.88; max-width:620px; }
+    .section-meta { display:flex; gap:1.5rem; margin-top:1.25rem; flex-wrap:wrap; }
+    .meta-item { font-size:0.8rem; opacity:0.8; }
+
+    /* ── CONTENT ── */
+    .content-wrap { max-width:820px; margin:0 auto; padding:3rem 2rem; }
+    .concept-block { margin-bottom:2.5rem; }
+    .concept-block h2 { font-size:1.25rem; font-weight:800; color:var(--dark); margin-bottom:0.5rem; }
+    .concept-block > p { color:var(--text); font-size:0.925rem; margin-bottom:1rem; }
+    .divider { height:1px; background:#e2e8f0; margin:2rem 0; }
+
+    /* ── INFO BOXES ── */
+    .info-box { border-radius:var(--radius); padding:1rem 1.25rem; display:flex; gap:0.75rem; align-items:flex-start; margin-bottom:1rem; font-size:0.875rem; }
+    .info-box.blue   { background:var(--pl);  border-left:4px solid var(--primary); }
+    .info-box.green  { background:var(--gl);  border-left:4px solid var(--green); }
+    .info-box.red    { background:var(--rl);  border-left:4px solid var(--red); }
+    .info-box.yellow { background:#fffbeb;    border-left:4px solid var(--accent); }
+    .info-box.orange { background:var(--ol);  border-left:4px solid var(--orange); }
+    .info-icon { font-size:1.1rem; flex-shrink:0; }
+    .info-box p { margin:0; color:var(--dark); }
+    .info-box strong { display:block; margin-bottom:0.2rem; }
+
+    /* ── CODE BOX ── */
+    .code-box { background:#0f172a; border-radius:var(--radius); padding:1.1rem 1.4rem; overflow-x:auto; font-family:'Courier New',monospace; font-size:0.82rem; line-height:1.7; color:#e2e8f0; margin-bottom:0.75rem; position:relative; }
+    .code-label { position:absolute; top:0.5rem; right:0.75rem; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#475569; }
+    .cg{color:#86efac;} .cr{color:#fca5a5;} .cb{color:#93c5fd;}
+    .cy{color:#fde68a;} .cm{color:#475569;font-style:italic;}
+
+    /* ═══════════════════════════
+       4-STEP METHODOLOGY
+    ═══════════════════════════ */
+    .steps-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+    .step-card {
+      background:var(--white); border:1px solid #e2e8f0; border-radius:var(--radius);
+      padding:1.25rem; position:relative; transition:box-shadow 0.2s;
+    }
+    .step-card:hover { box-shadow:0 4px 16px rgba(37,99,235,0.1); }
+    .step-num {
+      width:32px; height:32px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; font-size:0.85rem; font-weight:800; margin-bottom:0.7rem;
+    }
+    .step-num.s1 { background:var(--pl); color:var(--primary); }
+    .step-num.s2 { background:var(--ol); color:var(--orange); }
+    .step-num.s3 { background:var(--rl); color:var(--red); }
+    .step-num.s4 { background:var(--gl); color:var(--green); }
+    .step-card h4 { font-size:0.875rem; font-weight:700; color:var(--dark); margin-bottom:0.3rem; }
+    .step-card p  { font-size:0.8rem; color:var(--muted); }
+    .step-connector { display:none; }
+
+    /* ═══════════════════════════
+       PAYLOAD LIBRARY
+    ═══════════════════════════ */
+    .payload-library { background:var(--white); border:1px solid #e2e8f0; border-radius:var(--radius); overflow:hidden; margin-bottom:2rem; }
+    .pl-header { background:#0f172a; padding:0.85rem 1.25rem; display:flex; align-items:center; justify-content:space-between; }
+    .pl-header span { color:#94a3b8; font-size:0.8rem; font-weight:600; }
+    .pl-header strong { color:white; font-size:0.9rem; }
+    .pl-tabs { display:flex; border-bottom:1px solid #e2e8f0; background:#f8fafc; overflow-x:auto; }
+    .pl-tab {
+      padding:0.65rem 1rem; font-size:0.8rem; font-weight:700; color:var(--muted);
+      cursor:pointer; border:none; background:transparent; font-family:'Inter',sans-serif;
+      white-space:nowrap; border-bottom:2px solid transparent; transition:all 0.2s;
+    }
+    .pl-tab:hover { color:var(--dark); }
+    .pl-tab.active { color:var(--primary); border-bottom-color:var(--primary); background:white; }
+    .pl-body { padding:1.25rem; }
+    .pl-panel { display:none; }
+    .pl-panel.active { display:block; }
+    .pl-desc { font-size:0.85rem; color:var(--muted); margin-bottom:0.85rem; }
+    .payload-row {
+      display:flex; align-items:center; gap:0.75rem;
+      background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
+      padding:0.6rem 1rem; margin-bottom:0.5rem; cursor:pointer;
+      transition:all 0.15s;
+    }
+    .payload-row:hover { border-color:var(--primary); background:var(--pl); }
+    .payload-row.copied { border-color:var(--green); background:var(--gl); }
+    .pr-code { font-family:'Courier New',monospace; font-size:0.82rem; color:var(--dark); flex:1; word-break:break-all; }
+    .pr-label { font-size:0.7rem; font-weight:700; color:var(--muted); white-space:nowrap; }
+    .pr-copy { font-size:0.7rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:6px; background:var(--pl); color:var(--primary); white-space:nowrap; }
+    .payload-row.copied .pr-copy { background:var(--gl); color:var(--green); }
+    .pl-note { font-size:0.78rem; color:var(--muted); margin-top:0.75rem; font-style:italic; }
+
+    /* ═══════════════════════════
+       MULTI-CONTEXT LAB
+    ═══════════════════════════ */
+    .lab-wrap { background:var(--white); border:2px solid #e2e8f0; border-radius:var(--radius); overflow:hidden; margin-bottom:2rem; }
+    .lab-top { background:#0f172a; padding:0.7rem 1.1rem; display:flex; align-items:center; gap:0.6rem; }
+    .dot { width:11px; height:11px; border-radius:50%; }
+    .dot.r{background:#ef4444;} .dot.y{background:#eab308;} .dot.g{background:#22c55e;}
+    .lab-top-label { font-size:0.78rem; font-weight:600; color:#94a3b8; margin-left:0.3rem; }
+    .lab-context-tabs { display:flex; border-bottom:2px solid #e2e8f0; overflow-x:auto; }
+    .ctx-tab {
+      padding:0.65rem 1rem; font-size:0.82rem; font-weight:700; color:var(--muted);
+      cursor:pointer; border:none; background:#f8fafc; font-family:'Inter',sans-serif;
+      white-space:nowrap; border-bottom:3px solid transparent; transition:all 0.2s;
+    }
+    .ctx-tab:hover { color:var(--dark); background:white; }
+    .ctx-tab.active { color:var(--green); border-bottom-color:var(--green); background:white; }
+    .ctx-panel { display:none; padding:1.5rem; }
+    .ctx-panel.active { display:block; animation:fadeIn 0.25s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    .ctx-split { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
+    .ctx-split-left h4, .ctx-split-right h4 { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.6rem; }
+
+    /* Fake browser in lab */
+    .fake-browser { border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; }
+    .fb-bar { background:#f1f5f9; border-bottom:1px solid #e2e8f0; padding:0.5rem 0.85rem; font-size:0.75rem; font-weight:700; color:var(--muted); }
+    .fb-body { padding:1rem 1.1rem; }
+    .fb-body label { display:block; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.4rem; }
+    .fb-input { width:100%; padding:0.55rem 0.85rem; border:2px solid #e2e8f0; border-radius:7px; font-size:0.875rem; font-family:'Inter',sans-serif; color:var(--dark); transition:border-color 0.2s; margin-bottom:0.6rem; }
+    .fb-input:focus { outline:none; border-color:var(--primary); }
+    .fb-btn { padding:0.5rem 1rem; background:var(--green); color:white; border:none; border-radius:7px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; transition:background 0.15s; }
+    .fb-btn:hover { background:#15803d; }
+    .fb-result-lbl { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.3rem; margin-top:0.65rem; }
+    .fb-result { background:#f8fafc; border:1px solid #e2e8f0; border-radius:7px; padding:0.6rem 0.85rem; min-height:40px; font-size:0.875rem; color:var(--dark); }
+
+    /* Source code pane */
+    .source-pane { font-family:'Courier New',monospace; font-size:0.78rem; line-height:1.65; background:#0f172a; border-radius:8px; padding:0.85rem 1rem; color:#e2e8f0; max-height:180px; overflow-y:auto; }
+    .sp-ok { color:#86efac; } .sp-bad { color:#fca5a5; } .sp-muted { color:#475569; font-style:italic; } .sp-blue { color:#93c5fd; }
+
+    /* Lab log */
+    .lab-log { background:#0f172a; border-radius:8px; padding:0.75rem 1rem; font-family:'Courier New',monospace; font-size:0.76rem; color:#94a3b8; min-height:48px; max-height:110px; overflow-y:auto; margin-top:0.75rem; }
+    .ll-line { padding:0.1rem 0; }
+    .ll-t { color:#475569; } .ll-safe { color:#86efac; } .ll-atk { color:#fca5a5; } .ll-info { color:#93c5fd; }
+
+    /* Observation badge */
+    .obs-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.85rem 1rem; font-size:0.83rem; color:var(--dark); margin-top:0.75rem; }
+    .obs-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.35rem; }
+
+    /* ═══════════════════════════
+       DEVTOOLS GUIDE
+    ═══════════════════════════ */
+    .devtools-steps { display:flex; flex-direction:column; gap:0.75rem; }
+    .dt-step { display:flex; gap:1rem; align-items:flex-start; background:var(--white); border:1px solid #e2e8f0; border-radius:10px; padding:1rem 1.1rem; }
+    .dt-num { width:30px; height:30px; min-width:30px; border-radius:50%; background:var(--pl); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; }
+    .dt-content h4 { font-size:0.875rem; font-weight:700; color:var(--dark); margin-bottom:0.2rem; }
+    .dt-content p  { font-size:0.83rem; color:var(--muted); }
+    .dt-content code { background:#f1f5f9; padding:0.1rem 0.35rem; border-radius:4px; font-size:0.8rem; color:var(--dark); }
+
+    /* ═══════════════════════════
+       TESTING CHECKLIST
+    ═══════════════════════════ */
+    .checklist-wrap { background:var(--white); border:2px solid var(--primary); border-radius:var(--radius); overflow:hidden; margin-bottom:2rem; }
+    .cl-header { background:var(--pl); border-bottom:1px solid #bfdbfe; padding:0.9rem 1.25rem; display:flex; align-items:center; justify-content:space-between; }
+    .cl-header h3 { font-size:0.95rem; font-weight:800; color:var(--primary); }
+    .cl-progress-text { font-size:0.8rem; font-weight:700; color:var(--primary); }
+    .cl-body { padding:1.25rem; }
+    .cl-body p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
+    .cl-progress-bar { height:6px; background:#e2e8f0; border-radius:3px; margin-bottom:1.25rem; overflow:hidden; }
+    .cl-progress-fill { height:6px; background:var(--primary); border-radius:3px; width:0%; transition:width 0.3s; }
+    .cl-section-title { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin:1rem 0 0.5rem; }
+    .cl-item { display:flex; align-items:flex-start; gap:0.75rem; padding:0.55rem 0; border-bottom:1px solid #f1f5f9; cursor:pointer; }
+    .cl-item:last-child { border-bottom:none; }
+    .cl-checkbox { width:20px; height:20px; min-width:20px; border:2px solid #e2e8f0; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; transition:all 0.2s; margin-top:0.1rem; }
+    .cl-item.checked .cl-checkbox { background:var(--green); border-color:var(--green); color:white; }
+    .cl-item-text { font-size:0.875rem; color:var(--dark); }
+    .cl-item.checked .cl-item-text { color:var(--muted); text-decoration:line-through; }
+    .cl-done-msg { text-align:center; padding:1.25rem 0 0.25rem; font-size:0.9rem; font-weight:700; color:var(--green); display:none; }
+    .cl-done-msg.show { display:block; }
+    .cl-reset-btn { display:block; margin:0.75rem auto 0; padding:0.45rem 1.1rem; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; color:var(--muted); }
+    .cl-reset-btn:hover { background:#e2e8f0; }
+
+    /* ── NAV ── */
+    .nav-buttons { display:flex; justify-content:space-between; align-items:center; padding:2rem; background:var(--white); border-top:1px solid #e2e8f0; flex-wrap:wrap; gap:1rem; }
+    .nav-btn { display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.5rem; border-radius:8px; font-weight:700; font-size:0.9rem; text-decoration:none; transition:all 0.15s; }
+    .nav-btn-prev { background:#f1f5f9; color:var(--muted); border:1px solid #e2e8f0; }
+    .nav-btn-prev:hover { background:#e2e8f0; }
+    .nav-btn-next { background:var(--primary); color:white; box-shadow:0 3px 10px rgba(37,99,235,0.25); }
+    .nav-btn-next:hover { background:#1d4ed8; transform:translateX(2px); }
+    .nav-section-label { font-size:0.7rem; font-weight:400; opacity:0.7; display:block; }
+
+    footer { background:var(--dark); color:#94a3b8; text-align:center; padding:1.5rem; font-size:0.8rem; }
+    footer span { color:var(--accent); font-weight:600; }
+    @media(max-width:640px) { nav{display:none;} .ctx-split{grid-template-columns:1fr;} .steps-grid{grid-template-columns:1fr 1fr;} }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <img src="gokstadakademiet-logo-svart.PNG" alt="Logo"/>
+    <div>
+      <div class="site-title">Web Security</div>
+      <div class="site-subtitle">Sikkerhet i webutvikling</div>
+    </div>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="section3.html">← Sec 3</a>
+    <a href="#lab">Lab</a>
+    <a href="#checklist">Checklist</a>
+    <a href="section5.html">Sec 5 →</a>
+  </nav>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" style="width:80%;"></div>
+</div>
+
+<!-- HERO -->
+<section class="section-hero">
+  <div class="section-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> › Section 4</div>
+    <div class="section-badge">🔍 Section 4 of 5</div>
+    <h1>Testing for XSS</h1>
+    <p>Theory is only half the job. In this section you follow a real testing methodology, try payloads across four different vulnerable contexts, and build a professional testing habit with a practical checklist.</p>
+    <div class="section-meta">
+      <div class="meta-item">⏱️ ~30 min</div>
+      <div class="meta-item">📋 4-Step Method</div>
+      <div class="meta-item">🧪 4-Context Lab</div>
+      <div class="meta-item">✅ Testing Checklist</div>
+    </div>
+  </div>
+</section>
+
+<div class="content-wrap">
+
+  <!-- METHODOLOGY -->
+  <div class="concept-block">
+    <h2>📋 The 4-Step Testing Method</h2>
+    <p>Every manual XSS test follows the same structured process. Skip any step and you will miss vulnerabilities.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num s1">1</div>
+        <h4>Map Inputs</h4>
+        <p>Find every place user data enters the app — URL params, form fields, headers, cookies.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num s2">2</div>
+        <h4>Probe &amp; Observe</h4>
+        <p>Send a unique marker like <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;font-size:0.78rem;">xsstest123</code> and check where it appears in the page source or DOM.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num s3">3</div>
+        <h4>Inject Payload</h4>
+        <p>Based on context, inject a matching payload. Observe whether the browser parses and executes it.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num s4">4</div>
+        <h4>Confirm &amp; Document</h4>
+        <p>Confirm execution (e.g. alert fires, DOM changes). Note the type, location, and payload used.</p>
+      </div>
+    </div>
+
+    <div class="info-box yellow">
+      <div class="info-icon">💡</div>
+      <p><strong>Why "probe first"?</strong> Sending a harmless marker first tells you exactly where your input lands in the HTML — inside a tag, inside an attribute, or inside a script block. That context determines which payload to use.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PAYLOAD LIBRARY -->
+  <div class="concept-block">
+    <h2>📦 Payload Library</h2>
+    <p>Click any payload row to copy it to your clipboard. These are the most useful beginner payloads — grouped by purpose.</p>
+
+    <div class="payload-library">
+      <div class="pl-header">
+        <strong>XSS Payload Library</strong>
+        <span>Click a row to copy</span>
+      </div>
+      <div class="pl-tabs" id="plTabs">
+        <button class="pl-tab active" data-panel="basic">🔍 Detection</button>
+        <button class="pl-tab" data-panel="html">📄 HTML Injection</button>
+        <button class="pl-tab" data-panel="event">⚡ Event Handlers</button>
+        <button class="pl-tab" data-panel="bypass">🔶 Filter Bypass</button>
+      </div>
+      <div class="pl-body">
+
+        <div class="pl-panel active" id="pl-basic">
+          <p class="pl-desc">Start here. These payloads confirm whether a reflection point exists before attempting execution.</p>
+          <div class="payload-row" data-payload="xsstest123"><span class="pr-label">Probe marker</span><span class="pr-code">xsstest123</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload='&lt;script&gt;alert(1)&lt;/script&gt;'><span class="pr-label">Classic</span><span class="pr-code">&lt;script&gt;alert(1)&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload='&lt;script&gt;alert(document.domain)&lt;/script&gt;'><span class="pr-label">Domain confirm</span><span class="pr-code">&lt;script&gt;alert(document.domain)&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload='&lt;script&gt;console.log("XSS")&lt;/script&gt;'><span class="pr-label">Silent confirm</span><span class="pr-code">&lt;script&gt;console.log("XSS")&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
+          <p class="pl-note">💡 Tip: Always check browser DevTools Console after injecting — execution may be silent.</p>
+        </div>
+
+        <div class="pl-panel" id="pl-html">
+          <p class="pl-desc">These inject HTML without a script tag. Useful when script tags are filtered.</p>
+          <div class="payload-row" data-payload='&lt;b&gt;injected&lt;/b&gt;'><span class="pr-label">HTML tag test</span><span class="pr-code">&lt;b&gt;injected&lt;/b&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload='&lt;h1 style="color:red"&gt;XSS&lt;/h1&gt;'><span class="pr-label">Style inject</span><span class="pr-code">&lt;h1 style="color:red"&gt;XSS&lt;/h1&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload='&lt;img src="x" onerror="alert(1)"&gt;'><span class="pr-label">img onerror</span><span class="pr-code">&lt;img src="x" onerror="alert(1)"&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload='&lt;svg onload="alert(1)"&gt;&lt;/svg&gt;'><span class="pr-label">SVG onload</span><span class="pr-code">&lt;svg onload="alert(1)"&gt;&lt;/svg&gt;</span><span class="pr-copy">Copy</span></div>
+          <p class="pl-note">💡 Event-based payloads like <code>onerror</code> and <code>onload</code> execute JavaScript without any script tag at all.</p>
+        </div>
+
+        <div class="pl-panel" id="pl-event">
+          <p class="pl-desc">These payloads break out of HTML attribute values to inject event handlers — useful when your input lands inside a tag attribute.</p>
+          <div class="payload-row" data-payload='"&gt;&lt;img src=x onerror=alert(1)&gt;'><span class="pr-label">Quote break</span><span class="pr-code">"&gt;&lt;img src=x onerror=alert(1)&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload="'&gt;&lt;script&gt;alert(1)&lt;/script&gt;"><span class="pr-label">Single quote</span><span class="pr-code">'&gt;&lt;script&gt;alert(1)&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload='" autofocus onfocus="alert(1)" x="'><span class="pr-label">Autofocus</span><span class="pr-code">" autofocus onfocus="alert(1)" x="</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload="&lt;input type=text value=&quot;&quot; onfocus=&quot;alert(1)&quot; autofocus&gt;"><span class="pr-label">Input handler</span><span class="pr-code">&lt;input onfocus="alert(1)" autofocus&gt;</span><span class="pr-copy">Copy</span></div>
+          <p class="pl-note">💡 Context matters: if your input lands inside <code>value="..."</code>, you need to close the quote first before injecting.</p>
+        </div>
+
+        <div class="pl-panel" id="pl-bypass">
+          <p class="pl-desc">Some filters only check lowercase. These variations can bypass naive keyword-based filters.</p>
+          <div class="payload-row" data-payload="&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;"><span class="pr-label">Uppercase</span><span class="pr-code">&lt;SCRIPT&gt;alert(1)&lt;/SCRIPT&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload="&lt;ScRiPt&gt;alert(1)&lt;/ScRiPt&gt;"><span class="pr-label">Mixed case</span><span class="pr-code">&lt;ScRiPt&gt;alert(1)&lt;/ScRiPt&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload="&lt;scr&lt;script&gt;ipt&gt;alert(1)&lt;/scr&lt;/script&gt;ipt&gt;"><span class="pr-label">Nested tag</span><span class="pr-code">&lt;scr&lt;script&gt;ipt&gt;alert(1)&lt;/script&gt;</span><span class="pr-copy">Copy</span></div>
+          <div class="payload-row" data-payload="javascript:alert(1)"><span class="pr-label">JS protocol</span><span class="pr-code">javascript:alert(1)</span><span class="pr-copy">Copy</span></div>
+          <p class="pl-note">⚠ These show why string-matching filters are not reliable. Proper encoding and a Content Security Policy (CSP) are needed.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MULTI-CONTEXT LAB -->
+  <div class="concept-block" id="lab">
+    <h2>🧪 Multi-Context Lab</h2>
+    <p>The same payload does not work in every context. Test each of the four tabs to see how context changes what succeeds.</p>
+
+    <div class="lab-wrap">
+      <div class="lab-top">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <span class="lab-top-label">XSS Testing Lab — Four Vulnerable Contexts</span>
+      </div>
+      <div class="lab-context-tabs" id="ctxTabs">
+        <button class="ctx-tab active" data-ctx="ctx1">1 · URL Param</button>
+        <button class="ctx-tab" data-ctx="ctx2">2 · Comment Box</button>
+        <button class="ctx-tab" data-ctx="ctx3">3 · Attribute</button>
+        <button class="ctx-tab" data-ctx="ctx4">4 · DOM Hash</button>
+      </div>
+
+      <!-- CTX 1: URL Parameter -->
+      <div class="ctx-panel active" id="ctx1">
+        <div class="ctx-split">
+          <div class="ctx-split-left">
+            <h4>🖥️ Vulnerable App</h4>
+            <div class="fake-browser">
+              <div class="fb-bar">🌐 shop.example.com/search</div>
+              <div class="fb-body">
+                <label>Search query</label>
+                <input class="fb-input" id="ctx1-input" type="text" placeholder="Enter search term..." maxlength="200"/>
+                <button class="fb-btn" id="ctx1-btn">Search</button>
+                <div class="fb-result-lbl">Page Output</div>
+                <div class="fb-result" id="ctx1-result">Your results appear here.</div>
+              </div>
+            </div>
+          </div>
+          <div class="ctx-split-right">
+            <h4>📄 Vulnerable Source Code</h4>
+            <div class="source-pane">
+              <span class="sp-muted">// Server-side PHP (simplified)</span><br/>
+              <span class="sp-blue">$query</span> = <span class="sp-blue">$_GET</span>[<span class="sp-muted">'q'</span>];<br/>
+              <span class="sp-muted">// No sanitization!</span><br/>
+              echo <span class="sp-muted">"&lt;p&gt;Results for: "</span> . <span class="sp-bad">$query</span> . <span class="sp-muted">"&lt;/p&gt;"</span>;<br/>
+              <br/>
+              <span class="sp-muted">// URL: /search?q=YOUR_INPUT</span><br/>
+              <span class="sp-muted">// Type: Reflected XSS</span>
+            </div>
+          </div>
+        </div>
+        <div class="obs-label">OBSERVATION LOG</div>
+        <div class="lab-log" id="ctx1-log"><div class="ll-line"><span class="ll-info">[ready] Context 1 — URL Parameter. Try the payloads from the library above.</span></div></div>
+        <div class="obs-box" id="ctx1-obs">
+          <div class="obs-label">WHAT TO NOTICE</div>
+          Try a plain word first, then a <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;">&lt;b&gt;</code> tag, then an <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;">&lt;img onerror=...&gt;</code>. Notice how the browser renders each differently depending on the tag.
+        </div>
+      </div>
+
+      <!-- CTX 2: Comment Box -->
+      <div class="ctx-panel" id="ctx2">
+        <div class="ctx-split">
+          <div class="ctx-split-left">
+            <h4>🖥️ Vulnerable App</h4>
+            <div class="fake-browser">
+              <div class="fb-bar">🌐 blog.example.com/post/1</div>
+              <div class="fb-body">
+                <label>Leave a comment</label>
+                <input class="fb-input" id="ctx2-input" type="text" placeholder="Write your comment..." maxlength="200"/>
+                <button class="fb-btn" id="ctx2-submit-btn">Submit</button>
+                <div class="fb-result-lbl">Comments Section</div>
+                <div class="fb-result" id="ctx2-comments" style="min-height:60px;">No comments yet.</div>
+              </div>
+            </div>
+          </div>
+          <div class="ctx-split-right">
+            <h4>📄 Vulnerable Source Code</h4>
+            <div class="source-pane">
+              <span class="sp-muted">// Comment is saved to DB then rendered</span><br/>
+              <span class="sp-muted">// When page loads, JS reads stored comments:</span><br/><br/>
+              <span class="sp-blue">comments</span>.forEach(<span class="sp-blue">c</span> => {<br/>
+              &nbsp;&nbsp;<span class="sp-blue">const</span> div = document.<span class="sp-ok">createElement</span>(<span class="sp-muted">'div'</span>);<br/>
+              &nbsp;&nbsp;div.<span class="sp-bad">innerHTML</span> = c.text;<br/>
+              &nbsp;&nbsp;box.<span class="sp-ok">appendChild</span>(div);<br/>
+              });<br/>
+              <span class="sp-muted">// Type: Stored XSS</span>
+            </div>
+          </div>
+        </div>
+        <div class="obs-label">OBSERVATION LOG</div>
+        <div class="lab-log" id="ctx2-log"><div class="ll-line"><span class="ll-info">[ready] Context 2 — Comment Box (Stored). Submit multiple comments — they persist on the page.</span></div></div>
+        <div class="obs-box">
+          <div class="obs-label">WHAT TO NOTICE</div>
+          Unlike Context 1, submitted content <strong>stays on the page</strong> — simulating stored XSS. Submit a normal comment, then submit a malicious one. Every "visitor" who sees this page gets hit.
+        </div>
+      </div>
+
+      <!-- CTX 3: Attribute -->
+      <div class="ctx-panel" id="ctx3">
+        <div class="ctx-split">
+          <div class="ctx-split-left">
+            <h4>🖥️ Vulnerable App</h4>
+            <div class="fake-browser">
+              <div class="fb-bar">🌐 app.example.com/profile</div>
+              <div class="fb-body">
+                <label>Your username (shown as tooltip)</label>
+                <input class="fb-input" id="ctx3-input" type="text" placeholder='Try: " onmouseover="alert(1)' maxlength="200"/>
+                <button class="fb-btn" id="ctx3-btn">Update Profile</button>
+                <div class="fb-result-lbl">Rendered Output (hover the box)</div>
+                <div class="fb-result" id="ctx3-result" style="min-height:40px;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="ctx-split-right">
+            <h4>📄 Vulnerable Source Code</h4>
+            <div class="source-pane">
+              <span class="sp-muted">// Input injected into an attribute value</span><br/><br/>
+              <span class="sp-muted">// Safe input renders as:</span><br/>
+              &lt;div <span class="sp-ok">title=</span><span class="sp-muted">"</span><span class="sp-ok">alice</span><span class="sp-muted">"</span>&gt;Welcome&lt;/div&gt;<br/><br/>
+              <span class="sp-muted">// Attack: close the attribute + inject event</span><br/>
+              <span class="sp-muted">// Input: " onmouseover="alert(1)</span><br/>
+              &lt;div <span class="sp-ok">title=</span><span class="sp-muted">"</span><span class="sp-bad">" onmouseover="alert(1)</span><span class="sp-muted">"</span>&gt;…&lt;/div&gt;<br/>
+              <span class="sp-muted">// Type: Reflected XSS via attribute</span>
+            </div>
+          </div>
+        </div>
+        <div class="obs-label">OBSERVATION LOG</div>
+        <div class="lab-log" id="ctx3-log"><div class="ll-line"><span class="ll-info">[ready] Context 3 — Attribute Injection. Your input lands inside a title="" attribute.</span></div></div>
+        <div class="obs-box">
+          <div class="obs-label">WHAT TO NOTICE</div>
+          A plain word becomes a safe tooltip. But injecting <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;">" onmouseover="alert(1)</code> <strong>breaks out</strong> of the attribute and adds a new event handler. Hover the rendered box to trigger it.
+        </div>
+      </div>
+
+      <!-- CTX 4: DOM Hash -->
+      <div class="ctx-panel" id="ctx4">
+        <div class="ctx-split">
+          <div class="ctx-split-left">
+            <h4>🖥️ Vulnerable App</h4>
+            <div class="fake-browser">
+              <div class="fb-bar">🌐 app.example.com/welcome<span id="ctx4-url-suffix" style="color:#fde68a;font-family:monospace;font-size:0.78rem;"></span></div>
+              <div class="fb-body">
+                <label>Simulate URL hash (#) value</label>
+                <input class="fb-input" id="ctx4-input" type="text" placeholder="Type a name or payload..." maxlength="200"/>
+                <button class="fb-btn" id="ctx4-btn">Load Page</button>
+                <div class="fb-result-lbl">Page renders the hash as:</div>
+                <div class="fb-result" id="ctx4-result">The welcome message appears here.</div>
+              </div>
+            </div>
+          </div>
+          <div class="ctx-split-right">
+            <h4>📄 Vulnerable Source Code</h4>
+            <div class="source-pane">
+              <span class="sp-muted">// JavaScript reads the URL hash directly</span><br/>
+              <span class="sp-muted">// and writes it to the page — no server involved</span><br/><br/>
+              <span class="sp-blue">const</span> hash = window.location<span class="sp-bad">.hash</span>.substring(1);<br/>
+              <span class="sp-blue">const</span> name = decodeURIComponent(hash);<br/><br/>
+              document.getElementById(<span class="sp-muted">'msg'</span>).<span class="sp-bad">innerHTML</span><br/>
+              &nbsp;&nbsp;= <span class="sp-muted">"Welcome, "</span> + <span class="sp-bad">name</span>;<br/><br/>
+              <span class="sp-muted">// Payload NEVER reaches the server</span><br/>
+              <span class="sp-muted">// Type: DOM-Based XSS</span>
+            </div>
+          </div>
+        </div>
+        <div class="obs-label">OBSERVATION LOG</div>
+        <div class="lab-log" id="ctx4-log"><div class="ll-line"><span class="ll-info">[ready] Context 4 — DOM-Based (hash). Input is never sent to the server.</span></div></div>
+        <div class="obs-box">
+          <div class="obs-label">WHAT TO NOTICE</div>
+          Type a normal name first. Then try <code style="background:#f1f5f9;padding:0 3px;border-radius:3px;">&lt;img src=x onerror="this.parentNode.style.background='red'"&gt;</code>. Notice the URL bar updates but no server request is made — this is pure client-side DOM injection.
+        </div>
+      </div>
+
+    </div><!-- /lab-wrap -->
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- DEVTOOLS GUIDE -->
+  <div class="concept-block">
+    <h2>🛠️ Using Browser DevTools</h2>
+    <p>DevTools is your main observation tool during manual XSS testing. These are the exact steps you use on every target.</p>
+    <div class="devtools-steps">
+      <div class="dt-step">
+        <div class="dt-num">1</div>
+        <div class="dt-content">
+          <h4>Open DevTools</h4>
+          <p>Press <code>F12</code> (or <code>Ctrl+Shift+I</code>) in Chrome or Firefox. Keep it open while you test — never close it mid-session.</p>
+        </div>
+      </div>
+      <div class="dt-step">
+        <div class="dt-num">2</div>
+        <div class="dt-content">
+          <h4>Use the Console tab to confirm execution</h4>
+          <p>After injecting a payload, check the <code>Console</code> tab. If a <code>console.log("XSS")</code> payload ran, you will see the output here — even if the page looks normal.</p>
+        </div>
+      </div>
+      <div class="dt-step">
+        <div class="dt-num">3</div>
+        <div class="dt-content">
+          <h4>Use the Elements tab to find reflection points</h4>
+          <p>After sending a probe marker like <code>xsstest123</code>, use <code>Ctrl+F</code> inside the Elements tab to find where your string appears in the live DOM — not just the page source.</p>
+        </div>
+      </div>
+      <div class="dt-step">
+        <div class="dt-num">4</div>
+        <div class="dt-content">
+          <h4>Use the Network tab to watch requests</h4>
+          <p>Check the <code>Network</code> tab to see what data is being sent to the server. For DOM-based XSS, you will notice the payload <strong>never appears</strong> in any outgoing request.</p>
+        </div>
+      </div>
+      <div class="dt-step">
+        <div class="dt-num">5</div>
+        <div class="dt-content">
+          <h4>Use the Sources tab to trace DOM-based XSS</h4>
+          <p>In the <code>Sources</code> tab, use <code>Ctrl+Shift+F</code> to search all JavaScript files for dangerous sinks like <code>innerHTML</code>, <code>document.write</code>, or <code>eval</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TESTING CHECKLIST -->
+  <div class="concept-block" id="checklist">
+    <h2>✅ Professional Testing Checklist</h2>
+    <p>Tick off each step as you work through a real or practice target. This is the habit professional testers build.</p>
+
+    <div class="checklist-wrap">
+      <div class="cl-header">
+        <h3>🗒️ XSS Manual Testing Checklist</h3>
+        <span class="cl-progress-text" id="clProgressText">0 / 12</span>
+      </div>
+      <div class="cl-body">
+        <p>Check each item as you complete it. Progress is tracked above.</p>
+        <div class="cl-progress-bar"><div class="cl-progress-fill" id="clFill"></div></div>
+
+        <div class="cl-section-title">Phase 1 — Reconnaissance</div>
+        <div class="cl-item" data-id="0"><div class="cl-checkbox">✓</div><div class="cl-item-text">List all input points: URL params, form fields, headers, cookies</div></div>
+        <div class="cl-item" data-id="1"><div class="cl-checkbox">✓</div><div class="cl-item-text">Identify which inputs are reflected back in any page response</div></div>
+        <div class="cl-item" data-id="2"><div class="cl-checkbox">✓</div><div class="cl-item-text">Check page source and DevTools Elements tab for your probe marker</div></div>
+
+        <div class="cl-section-title">Phase 2 — Context Analysis</div>
+        <div class="cl-item" data-id="3"><div class="cl-checkbox">✓</div><div class="cl-item-text">Determine context: between HTML tags, inside attribute, or inside JS?</div></div>
+        <div class="cl-item" data-id="4"><div class="cl-checkbox">✓</div><div class="cl-item-text">Check if special characters (&lt; &gt; " ') are encoded or passed raw</div></div>
+        <div class="cl-item" data-id="5"><div class="cl-checkbox">✓</div><div class="cl-item-text">Test for DOM-based sinks: search JS for innerHTML, eval, document.write</div></div>
+
+        <div class="cl-section-title">Phase 3 — Exploitation Attempt</div>
+        <div class="cl-item" data-id="6"><div class="cl-checkbox">✓</div><div class="cl-item-text">Try a basic &lt;script&gt;alert(1)&lt;/script&gt; payload</div></div>
+        <div class="cl-item" data-id="7"><div class="cl-checkbox">✓</div><div class="cl-item-text">Try event-based payloads: &lt;img src=x onerror=alert(1)&gt;</div></div>
+        <div class="cl-item" data-id="8"><div class="cl-checkbox">✓</div><div class="cl-item-text">Try filter bypasses: uppercase, mixed case, nested tags</div></div>
+        <div class="cl-item" data-id="9"><div class="cl-checkbox">✓</div><div class="cl-item-text">Confirm execution in the DevTools Console tab</div></div>
+
+        <div class="cl-section-title">Phase 4 — Documentation</div>
+        <div class="cl-item" data-id="10"><div class="cl-checkbox">✓</div><div class="cl-item-text">Note the XSS type (Reflected / Stored / DOM-based)</div></div>
+        <div class="cl-item" data-id="11"><div class="cl-checkbox">✓</div><div class="cl-item-text">Record the exact input field, URL, and payload that triggered it</div></div>
+
+        <div class="cl-done-msg" id="clDoneMsg">🎉 Checklist complete — you are ready for the mini project!</div>
+        <button class="cl-reset-btn" id="clResetBtn">↺ Reset Checklist</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="info-box blue">
+    <div class="info-icon">🚀</div>
+    <p><strong>Coming up — Section 5 (Mini Project):</strong> You will receive a pre-built vulnerable app with two hidden XSS flaws. Your job: find both, document them using this checklist format, then patch them.</p>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div class="nav-buttons">
+  <a href="section3.html" class="nav-btn nav-btn-prev">← <span><span class="nav-section-label">Back to</span>Three Types of XSS</span></a>
+  <a href="section5.html" class="nav-btn nav-btn-next"><span><span class="nav-section-label">Up next</span>Mini Project</span> →</a>
+</div>
+
+<footer>
+  <p>Web Security Module · Section 4 of 5 · <span>Mazaher Kianpour</span> · Gokstad Akademiet</p>
+</footer>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", function() {
+
+  /* ══ PAYLOAD LIBRARY TABS ══ */
+  var plTabBtns = document.querySelectorAll(".pl-tab");
+  plTabBtns.forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      plTabBtns.forEach(function(b) { b.classList.remove("active"); });
+      document.querySelectorAll(".pl-panel").forEach(function(p) { p.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById("pl-" + btn.getAttribute("data-panel")).classList.add("active");
+    });
+  });
+
+  /* ── Copy payloads ── */
+  document.querySelectorAll(".payload-row").forEach(function(row) {
+    row.addEventListener("click", function() {
+      var text = row.getAttribute("data-payload");
+      // Decode HTML entities
+      var el = document.createElement("textarea");
+      el.innerHTML = text;
+      var decoded = el.value;
+      navigator.clipboard.writeText(decoded).then(function() {
+        row.classList.add("copied");
+        var copyBtn = row.querySelector(".pr-copy");
+        if (copyBtn) { copyBtn.textContent = "Copied!"; }
+        setTimeout(function() {
+          row.classList.remove("copied");
+          if (copyBtn) { copyBtn.textContent = "Copy"; }
+        }, 1800);
+      }).catch(function() {
+        // Fallback for older browsers
+        row.classList.add("copied");
+        setTimeout(function() { row.classList.remove("copied"); }, 1800);
+      });
+    });
+  });
+
+  /* ══ CONTEXT LAB TABS ══ */
+  var ctxTabBtns = document.querySelectorAll(".ctx-tab");
+  ctxTabBtns.forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      ctxTabBtns.forEach(function(b) { b.classList.remove("active"); });
+      document.querySelectorAll(".ctx-panel").forEach(function(p) { p.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById(btn.getAttribute("data-ctx")).classList.add("active");
+    });
+  });
+
+  /* ── Log helper ── */
+  function addLog(logId, msg, type) {
+    var log = document.getElementById(logId);
+    var t = new Date().toLocaleTimeString("en-GB");
+    var d = document.createElement("div");
+    d.className = "ll-line";
+    d.innerHTML = "<span class='ll-t'>[" + t + "]</span> <span class='ll-" + type + "'>" + msg + "</span>";
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  /* ── Detect if input looks like an attack ── */
+  function isAttack(input) {
+    return /<[a-zA-Z]/.test(input) || /on\w+\s*=/i.test(input) || /javascript:/i.test(input);
+  }
+
+  /* ── Strip script tags for demo safety ── */
+  function safeInner(input) {
+    return input.replace(/<script[\s\S]*?<\/script>/gi, "[&lt;script&gt; blocked in sandbox]");
+  }
+
+  /* ══ CTX 1 — URL Param ══ */
+  document.getElementById("ctx1-btn").addEventListener("click", function() {
+    var val = document.getElementById("ctx1-input").value.trim();
+    if (!val) { return; }
+    var result = document.getElementById("ctx1-result");
+    if (isAttack(val)) {
+      result.innerHTML = "Results for: " + safeInner(val);
+      addLog("ctx1-log", "innerHTML used — HTML in input was rendered by the browser", "atk");
+      if (/onerror|onload|onmouseover|onfocus/i.test(val)) {
+        addLog("ctx1-log", "Event handler detected — JavaScript executed without a script tag!", "atk");
+      }
+    } else {
+      result.textContent = "Results for: " + val;
+      addLog("ctx1-log", "Safe — textContent output, no HTML parsing", "safe");
+    }
+  });
+  document.getElementById("ctx1-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") { document.getElementById("ctx1-btn").click(); }
+  });
+
+  /* ══ CTX 2 — Comment Box (Stored) ══ */
+  var storedComments = [];
+  document.getElementById("ctx2-submit-btn").addEventListener("click", function() {
+    var val = document.getElementById("ctx2-input").value.trim();
+    if (!val) { return; }
+    storedComments.push(val);
+    document.getElementById("ctx2-input").value = "";
+    renderComments();
+    if (isAttack(val)) {
+      addLog("ctx2-log", "Payload stored! Will execute for every user who loads this page.", "atk");
+    } else {
+      addLog("ctx2-log", "Comment stored: \"" + val.substring(0, 40) + "\"", "safe");
+    }
+  });
+  document.getElementById("ctx2-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") { document.getElementById("ctx2-submit-btn").click(); }
+  });
+
+  function renderComments() {
+    var box = document.getElementById("ctx2-comments");
+    box.innerHTML = "";
+    storedComments.forEach(function(c, i) {
+      var div = document.createElement("div");
+      div.style.cssText = "padding:0.35rem 0; border-bottom:1px solid #f1f5f9; font-size:0.875rem;";
+      // Simulate vulnerable innerHTML rendering
+      div.innerHTML = "<strong style='color:#64748b;font-size:0.72rem;'>User_" + (i+1) + ":</strong> " + safeInner(c);
+      box.appendChild(div);
+    });
+  }
+
+  /* ══ CTX 3 — Attribute Injection ══ */
+  document.getElementById("ctx3-btn").addEventListener("click", function() {
+    var val = document.getElementById("ctx3-input").value.trim();
+    if (!val) { return; }
+    var result = document.getElementById("ctx3-result");
+    result.innerHTML = "";
+
+    // Simulate attribute context
+    var div = document.createElement("div");
+    div.style.cssText = "background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:0.6rem 0.85rem;font-size:0.875rem;cursor:pointer;color:#1e40af;font-weight:600;";
+
+    if (/"\s*on\w+\s*=/i.test(val) || /'\s*on\w+\s*=/i.test(val)) {
+      // Attribute breakout detected
+      div.textContent = "Welcome, " + val.replace(/["']/g, "");
+      // Add the event handler dynamically to simulate the breakout
+      try {
+        div.setAttribute("data-injected", "true");
+        div.addEventListener("mouseover", function() {
+          div.style.background = "#fca5a5";
+          div.textContent = "⚠ onmouseover fired! Attribute injection worked.";
+        });
+      } catch(e) {}
+      addLog("ctx3-log", "Attribute breakout detected — event handler injected into element!", "atk");
+      addLog("ctx3-log", "Hover the blue box above to trigger the event handler.", "info");
+    } else if (isAttack(val)) {
+      div.innerHTML = "Welcome, " + safeInner(val);
+      addLog("ctx3-log", "HTML tags in input rendered via innerHTML", "atk");
+    } else {
+      div.setAttribute("title", val);
+      div.textContent = "Welcome, " + val + " (hover me for tooltip)";
+      addLog("ctx3-log", "Safe input — rendered as text inside attribute: title=\"" + val + "\"", "safe");
+    }
+    result.appendChild(div);
+  });
+  document.getElementById("ctx3-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") { document.getElementById("ctx3-btn").click(); }
+  });
+
+  /* ══ CTX 4 — DOM Hash ══ */
+  document.getElementById("ctx4-btn").addEventListener("click", function() {
+    var val = document.getElementById("ctx4-input").value.trim();
+    if (!val) { return; }
+    var result = document.getElementById("ctx4-result");
+    var urlSuffix = document.getElementById("ctx4-url-suffix");
+
+    // Simulate URL hash update
+    urlSuffix.textContent = "#" + encodeURIComponent(val).substring(0, 30);
+
+    addLog("ctx4-log", "Simulating: window.location.hash = '#" + val.substring(0, 30) + "'", "info");
+    addLog("ctx4-log", "Note: hash fragment is NEVER sent to the server", "info");
+
+    if (isAttack(val)) {
+      // Simulate vulnerable innerHTML reading the hash
+      result.innerHTML = "Welcome, " + safeInner(val);
+      addLog("ctx4-log", "DOM-based XSS: JS read the hash and wrote it via innerHTML", "atk");
+      if (/onerror|onload/i.test(val)) {
+        addLog("ctx4-log", "Event handler in payload — would execute in a real app!", "atk");
+      }
+    } else {
+      result.textContent = "Welcome, " + val;
+      addLog("ctx4-log", "Safe input — rendered as plain text", "safe");
+    }
+  });
+  document.getElementById("ctx4-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") { document.getElementById("ctx4-btn").click(); }
+  });
+
+  /* ══ TESTING CHECKLIST ══ */
+  var checked = {};
+  var totalItems = 12;
+
+  document.querySelectorAll(".cl-item").forEach(function(item) {
+    item.addEventListener("click", function() {
+      var id = item.getAttribute("data-id");
+      checked[id] = !checked[id];
+      if (checked[id]) {
+        item.classList.add("checked");
+      } else {
+        item.classList.remove("checked");
+      }
+      updateChecklist();
+    });
+  });
+
+  function updateChecklist() {
+    var count = Object.values(checked).filter(Boolean).length;
+    document.getElementById("clProgressText").textContent = count + " / " + totalItems;
+    var pct = (count / totalItems) * 100;
+    document.getElementById("clFill").style.width = pct + "%";
+    if (count === totalItems) {
+      document.getElementById("clDoneMsg").classList.add("show");
+    } else {
+      document.getElementById("clDoneMsg").classList.remove("show");
+    }
+  }
+
+  document.getElementById("clResetBtn").addEventListener("click", function() {
+    checked = {};
+    document.querySelectorAll(".cl-item").forEach(function(item) {
+      item.classList.remove("checked");
+    });
+    updateChecklist();
+  });
+
+}); // end DOMContentLoaded
+</script>
+</body>
+</html>
